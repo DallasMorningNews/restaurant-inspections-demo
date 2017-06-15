@@ -49,16 +49,20 @@ def parse_inspection(raw_inspection):
 def parse_violations(inspection):
     violations_dict = []
     for violation_num in range(1,25):
-        if ['violation%s_points'.format(violation_num)]:
+        if ('violation%s_points' % (violation_num)):
+            description = ""
+            if ('violation%s_description' % (violation_num)):
+                description = inspection.get('violation%s_description' % (violation_num))
+            else:
+                description = inspection.get('violation_description_%s' % (violation_num))
             return {
-                "points": inspection.get(['violation%d_points'], violation_num)
+            "points": inspection.get('violation%s_points' % (violation_num)),
+            "memo": inspection.get('violation%s_memo' % (violation_num)),
+            "text": inspection.get('violation%s_text' % (violation_num)),
+            "description": description
             }
         else:
             break
-
-
-
-    return violation_list
 
 test = load_data(data)
 print(test)
