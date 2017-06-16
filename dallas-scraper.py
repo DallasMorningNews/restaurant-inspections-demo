@@ -47,7 +47,7 @@ def parse_inspection(raw_inspection):
     }
 
 def parse_violations(inspection):
-    violations_dict = []
+    # violations_dict = []
     for violation_num in range(1,25):
         if ('violation%s_points' % (violation_num)):
             description = ""
