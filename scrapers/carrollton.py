@@ -56,6 +56,15 @@ def get_iframe_html():
 
     return soup
 
+def get_link():
+    iframe = get_html()
+    soup = BeautifulSoup(iframe, "html.parser")
+    table = soup.find('tbody')
+    results = []
+    for row in table.find_all('tr'):
+        results.append(row['onclick'])
+    return results
+
 
 def get_inspection_id(onclick_text):
     '''TK.
