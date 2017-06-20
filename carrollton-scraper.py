@@ -19,4 +19,15 @@ def get_html():
     # iframesrc = requests.get(iframe.attrs['src'], params={'s':100, 'i':restaurant-id}).content
     return iframesrc
 
-print(get_html())
+def get_link():
+    iframe = get_html()
+    soup = BeautifulSoup(iframe, "html.parser")
+    table = soup.find('tbody')
+    results = []
+    for row in table.find_all('tr'):
+        results.append(row['onclick'])
+    return results
+
+
+# print(get_html())
+print(get_link())
