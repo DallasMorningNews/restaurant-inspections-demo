@@ -15,15 +15,25 @@ FEED_URL= ('https://www.dallasopendata.com/resource/44uy-sq8p.json')
 r = requests.get(FEED_URL)
 if r.status_code == 200:
     data = r.json()
-    # print(data)
 
 def load_data(raw_data):
+    '''Main function to load all inspection data in an array
+
+    :param raw_data: JSON received from the requests.get function
+    :return row_dict: an array of all inspections and their information
+    :rtype: array
+    '''
     row_dict = []
     for item in raw_data:
         row_dict.append(parse_inspection(item))
     return row_dict
 
 def parse_inspection(raw_inspection):
+    '''Parses each object through a for loop in load_data() to clean up the variable names and store violations as their own objects
+
+    :param raw_inspection: an individual JSON object for an inspection
+    :rtype: object
+    '''
     return {
     "2f7u_region_code": raw_inspection.get(':@computed_region_2f7u_b5gs', None),
     "sjyw_region_code": raw_inspection.get(':@computed_region_sjyw_rtbm', None),
@@ -47,7 +57,12 @@ def parse_inspection(raw_inspection):
     }
 
 def parse_violations(inspection):
-    # violations_dict = []
+    '''Parses violations from individual object to store them as objects
+
+    :param inspection: an individual JSON object for an inspection
+    :rtype: object
+    '''
+    violations_dict = []
     for violation_num in range(1,25):
         if ('violation%s_points' % (violation_num)):
             description = ""
@@ -61,8 +76,9 @@ def parse_violations(inspection):
             "text": inspection.get('violation%s_text' % (violation_num)),
             "description": description
             }
+            # violations_dict.append(violation_info)
         else:
             break
+    # return violations_dict
 
-test = load_data(data)
-print(test)
+print(load_data(data))
