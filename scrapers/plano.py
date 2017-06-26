@@ -19,7 +19,7 @@ INSPECTION_URL = ''.join([
 ])
 
 
-def get_restaurant_ids():
+def get_restaurant_list():
     '''Gets list of restaurant ID's via GetRestaurantList post
 
     :return locationID_dict: an array of restaurant location ID's
@@ -42,19 +42,22 @@ def get_restaurant_ids():
     r = requests.post(LIST_URL, headers=headers, data=data)
     raw_restaurant_list = json.loads(r.json()['d'])
     restaurant_list = raw_restaurant_list.get('restaurantDetailList')
-    locationID_dict = []
+    restaurant_dict = []
     for restaurant in restaurant_list:
         locationID = restaurant.get('locationId')
         grade = restaurant.get('grade')
         recentInspectedDate = restaurant.get('recentInspectedDate')
-        locationID_dict.append(locationID)
-        locationID_dict.append(grade)
-        locationID_dict.append(recentInspectedDate)
+        individualrestaurant = {
+            "restaurantID": locationID,
+            "latestInspectionGrade": grade,
+            "latestInspectionDate": recentInspectedDate
+        }
+        restaurant_dict.append(individualrestaurant)
 
-    return locationID_dict
+    return restaurant_dict
 
 
-def get_restaurant_inspection(locationID_dict):
+def get_restaurant_inspection(restaurant_dict):
     '''TK.
 
     '''
