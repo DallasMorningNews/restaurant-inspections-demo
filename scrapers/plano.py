@@ -48,13 +48,14 @@ def get_restaurant_list():
         grade = restaurant.get('grade')
         recentInspectedDate = restaurant.get('recentInspectedDate')
         individualrestaurant = {
-            "restaurantID": locationID,
-            "latestInspectionGrade": grade,
-            "latestInspectionDate": recentInspectedDate
+            'restaurantID': locationID,
+            'latestInspectionGrade': grade,
+            'latestInspectionDate': recentInspectedDate
         }
         restaurant_dict.append(individualrestaurant)
 
     return restaurant_dict
+
 
 def get_restaurant_inspection(restaurant_dict):
     '''TK.
@@ -65,12 +66,14 @@ def get_restaurant_inspection(restaurant_dict):
     }
 
     inspections_dict = []
-    for item in restaurant_dict:
+    for counter, item in enumerate(restaurant_dict):
         data_raw = {
             'locationId': item['restaurantID'],
             'invId': 1,
         }
         data = json.dumps(data_raw)
+
+        print('Getting item #{}'.format(counter))
 
         r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
@@ -81,5 +84,6 @@ def get_restaurant_inspection(restaurant_dict):
 
     return inspections_dict
 
-x = get_restaurant_list()
-print(get_restaurant_inspection(x))
+
+# x = get_restaurant_list()
+# print(get_restaurant_inspection(x))
