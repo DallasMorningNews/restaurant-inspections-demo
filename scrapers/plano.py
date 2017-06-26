@@ -4,14 +4,21 @@
 import json
 import requests
 
-URL = ''.join([
+LIST_URL = ''.join([
     'https://ecop.plano.gov/restaurantscores/',
     'RestaurantScores.aspx/GetRestaurantList'
 ])
 
-def get_restaurant_list():
-    '''TK.
+INSPECTION_URL = ''.join([
+    'https://ecop.plano.gov/restaurantscores/',
+    'RestaurantScores.aspx/GetRestaurantHistory'
+])
 
+def get_restaurant_ids():
+    '''Gets list of restaurant ID's via GetRestaurantList post
+
+    :return locationID_dict: an array of restaurant location ID's
+    :rtype: array:
     '''
     headers = { 'Content-Type': 'application/json; charset=UTF-8' }
     data = ''.join([
@@ -25,21 +32,30 @@ def get_restaurant_list():
         '"zipcode":""',
         '}}'
     ])
-    r = requests.post(URL, headers=headers, data=data)
-    restaurant_list = json.loads(r.json()['d'])
-    return restaurant_list
+    r = requests.post(LIST_URL, headers=headers, data=data)
+    raw_restaurant_list = json.loads(r.json()['d'])
+    restaurant_list = raw_restaurant_list.get('restaurantDetailList')
+    locationID_dict = []
+    for restaurant in restaurant_list:
+        locationID = restaurant.get('locationId')
+        locationID_dict.append(locationID)
+    return locationID_dict
 
-
-def get_restaurant_inspections(locationID):
+def get_restaurant_inspection(locationID_dict):
     '''TK.
 
     '''
     headers = { 'Content-Type': 'application/json; charset=UTF-8' }
 
-    data = '{"locationId":9101,"invId":1}'
+    for locationID in locationID_dict:
+        data = '{"locationId":locationID,"invId":1}'
 
-    r = requests.post(URL, headers=headers, data=data)
+        r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
-    restaurant = json.loads(r.json()['d'])
+        restaurant = json.(r.json()['d'])
+        # # restaurant.append(locationID)
 
-print(get_restaurant_list())
+    return restaurant
+
+ids = get_restaurant_ids()
+print(get_restaurant_inspection(ids))
