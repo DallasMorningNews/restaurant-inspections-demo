@@ -22,8 +22,8 @@ INSPECTION_URL = ''.join([
 def get_restaurant_list():
     '''Gets list of restaurant ID's via GetRestaurantList post
 
-    :return locationID_dict: an array of restaurant location ID's
-    :rtype: array:
+    :return restaurant_dict: an array of restaurant info
+    :rtype: array
     '''
     headers = {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -56,7 +56,6 @@ def get_restaurant_list():
 
     return restaurant_dict
 
-
 def get_restaurant_inspection(restaurant_dict):
     '''TK.
 
@@ -65,16 +64,22 @@ def get_restaurant_inspection(restaurant_dict):
         'Content-Type': 'application/json; charset=UTF-8'
     }
 
-    for locationID in locationID_dict:
+    inspections_dict = []
+    for item in restaurant_dict:
         data_raw = {
-            'locationId': locationID,
+            'locationId': item['restaurantID'],
             'invId': 1,
         }
         data = json.dumps(data_raw)
 
         r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
-        restaurant = r.json()['d']
+        restaurant = {r.json()['d']}
+        inspections_dict.append(restaurant)
+
         # # restaurant.append(locationID)
 
-    return restaurant
+    return inspections_dict
+
+x = get_restaurant_list()
+print(get_restaurant_inspection(x))
