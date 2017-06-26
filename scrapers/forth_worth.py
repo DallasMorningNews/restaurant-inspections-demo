@@ -19,4 +19,6 @@ ALL_RESTAURANTS_LIST_URL = '{}/FacilityList.aspx?Alpha=ALL'.format(BASE_URL)
 
 
 def get_restaurant_list():
-    pass
+    browser = StatefulBrowser(
+        soup_config={'features':'html.parser'}
+    )
