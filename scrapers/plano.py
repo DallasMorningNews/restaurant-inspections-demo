@@ -38,7 +38,11 @@ def get_restaurant_ids():
     locationID_dict = []
     for restaurant in restaurant_list:
         locationID = restaurant.get('locationId')
+        grade = restaurant.get('grade')
+        recentInspectedDate = restaurant.get('recentInspectedDate')
         locationID_dict.append(locationID)
+        locationID_dict.append(grade)
+        locationID_dict.append(recentInspectedDate)
     return locationID_dict
 
 def get_restaurant_inspection(locationID_dict):
@@ -48,14 +52,15 @@ def get_restaurant_inspection(locationID_dict):
     headers = { 'Content-Type': 'application/json; charset=UTF-8' }
 
     for locationID in locationID_dict:
-        data = '{"locationId":locationID,"invId":1}'
+        data_raw = { 'locationId': locationID, 'invId': 1}
+        data = json.dumps(data_raw)
 
         r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
-        restaurant = json.(r.json()['d'])
+        # restaurant = r.json()['d']
         # # restaurant.append(locationID)
 
     return restaurant
 
 ids = get_restaurant_ids()
-print(get_restaurant_inspection(ids))
+print(get_restaurant_ids())
