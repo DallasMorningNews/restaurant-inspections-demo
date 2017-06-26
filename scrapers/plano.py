@@ -1,9 +1,13 @@
-# main link https://ecop.plano.gov/restaurantscores/
-# no url params, paginates
-
+# Imports from python.  # NOQA
 import json
+
+
+# Imports from other dependencies.
 import requests
 
+
+# main link https://ecop.plano.gov/restaurantscores/
+# no url params, paginates
 LIST_URL = ''.join([
     'https://ecop.plano.gov/restaurantscores/',
     'RestaurantScores.aspx/GetRestaurantList'
@@ -11,8 +15,9 @@ LIST_URL = ''.join([
 
 INSPECTION_URL = ''.join([
     'https://ecop.plano.gov/restaurantscores/',
-    'RestaurantScores.aspx/GetRestaurantHistory'
+    'RestaurantScores.aspx/GetRestaurantHistory',
 ])
+
 
 def get_restaurant_ids():
     '''Gets list of restaurant ID's via GetRestaurantList post
@@ -20,7 +25,9 @@ def get_restaurant_ids():
     :return locationID_dict: an array of restaurant location ID's
     :rtype: array:
     '''
-    headers = { 'Content-Type': 'application/json; charset=UTF-8' }
+    headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+    }
     data = ''.join([
         '{"criteria":{',
         '"restaurantName":"",',
@@ -43,24 +50,28 @@ def get_restaurant_ids():
         locationID_dict.append(locationID)
         locationID_dict.append(grade)
         locationID_dict.append(recentInspectedDate)
+
     return locationID_dict
+
 
 def get_restaurant_inspection(locationID_dict):
     '''TK.
 
     '''
-    headers = { 'Content-Type': 'application/json; charset=UTF-8' }
+    headers = {
+        'Content-Type': 'application/json; charset=UTF-8'
+    }
 
     for locationID in locationID_dict:
-        data_raw = { 'locationId': locationID, 'invId': 1}
+        data_raw = {
+            'locationId': locationID,
+            'invId': 1,
+        }
         data = json.dumps(data_raw)
 
         r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
-        # restaurant = r.json()['d']
+        restaurant = r.json()['d']
         # # restaurant.append(locationID)
 
     return restaurant
-
-ids = get_restaurant_ids()
-print(get_restaurant_ids())
