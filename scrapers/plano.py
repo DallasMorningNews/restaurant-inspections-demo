@@ -57,7 +57,7 @@ def get_restaurant_list():
     return restaurant_dict
 
 
-def get_restaurant_inspection(restaurant_dict):
+def get_restaurant_inspection(restaurant_dict, start_val=0, end_val=None):
     '''TK.
 
     '''
@@ -65,25 +65,25 @@ def get_restaurant_inspection(restaurant_dict):
         'Content-Type': 'application/json; charset=UTF-8'
     }
 
+    if end_val is None:
+        end_val = len(restaurant_dict)
+
     inspections_dict = []
     for counter, item in enumerate(restaurant_dict):
-        data_raw = {
-            'locationId': item['restaurantID'],
-            'invId': 1,
-        }
-        data = json.dumps(data_raw)
+        if start_val <= (counter+1) <= end_val:
+            data_raw = {
+                'locationId': item['restaurantID'],
+                'invId': 1,
+            }
+            data = json.dumps(data_raw)
 
-        print('Getting item #{}'.format(counter))
+            print('Getting item #{}'.format(counter))
 
-        r = requests.post(INSPECTION_URL, headers=headers, data=data)
+            r = requests.post(INSPECTION_URL, headers=headers, data=data)
 
-        restaurant = {r.json()['d']}
-        inspections_dict.append(restaurant)
+            restaurant = {r.json()['d']}
+            inspections_dict.append(restaurant)
 
         # # restaurant.append(locationID)
 
     return inspections_dict
-
-
-# x = get_restaurant_list()
-# print(get_restaurant_inspection(x))
