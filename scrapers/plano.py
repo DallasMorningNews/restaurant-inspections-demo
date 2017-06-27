@@ -44,10 +44,15 @@ def get_restaurant_list():
     restaurant_list = raw_restaurant_list.get('restaurantDetailList')
     restaurant_dict = []
     for restaurant in restaurant_list:
+        name = restaurant.get('name')
+        address = restaurant.get('address')
         locationID = restaurant.get('locationId')
         grade = restaurant.get('grade')
         recentInspectedDate = restaurant.get('recentInspectedDate')
         individualrestaurant = {
+            'establishment_name': name,
+            'address': address,
+            'city': "Plano",
             'restaurantID': locationID,
             'latestInspectionGrade': grade,
             'latestInspectionDate': recentInspectedDate
@@ -77,7 +82,7 @@ def get_restaurant_inspection(restaurant_dict, start_val=0, end_val=None):
             }
             data = json.dumps(data_raw)
 
-            print('Getting item #{}'.format(counter))
+            #print('Getting item #{}'.format(counter))
 
             r = requests.post(INSPECTION_URL, headers=headers, data=data)
 

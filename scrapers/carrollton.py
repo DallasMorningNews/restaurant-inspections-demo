@@ -121,5 +121,3 @@ def parse_violations(inspection):
         }
         violations_dict.append(violation_info)
     return violations_dict
-
-print(load_data())
