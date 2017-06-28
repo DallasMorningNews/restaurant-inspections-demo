@@ -311,3 +311,14 @@ def lift_table_from_page(markup):
         return rows_formatted
 
     return None
+
+
+# Per-restaurant capture function will go here.
+# All that *should* be needed is to spin up a new browser, navigate to
+# `INITIAL_URL`, then navigate to an absolute-URL version of what's in
+# a given restaurant's `detail_link` listing.
+# Ideally, we should chop off the address from the querystring in the
+# `detail_link` URL.
+
+# Each separate inspection is another link off the restaurant detail
+# page, but those links are all retrievable with GET requests.
