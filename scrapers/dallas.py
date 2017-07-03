@@ -80,5 +80,3 @@ def parse_violations(inspection):
         else:
             break
     # return violations_dict
-
-print(load_data(data))
