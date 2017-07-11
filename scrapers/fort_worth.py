@@ -82,42 +82,116 @@ def get_all_restaurants():
 
     return all_results
 
-def get_detail_links(all_restaurant_list):
-    ''' TK.
-    tentatively should take in all_results from get_all_restaurants and extract detail link from it
-    '''
-    # browser = create_browser()
-    # browser.open(INITIAL_URL)
-    all_detail_links = []
-    for i in all_restaurant_list:
-        details = i['detail_link']
-        detail_link = '{0}/{1}'.format(INITIAL_URL, details)
-        all_detail_links.append(detail_link)
-    return all_detail_links
+def get_details(all_restaurants):
+    ''' Gets all the details from an individual restaurant's page and stores them in an array of json objects.
 
-def get_details(all_detail_links):
-    ''' TK.
-    tentatively will get all the details from each page
+    :param all_restaurants: a list of json objects obtained after lift_table_from_page() is performed
+    :return all_details: an array of every restaurant and its health inspection details
+    :rtype: array
     '''
 
     all_details = []
-    browser=create_browser()
-    browser.open(INITIAL_URL)
-    for link in all_detail_links:
-        browser.open(link)
-        restaurant = browser.get_current_page()
-        print(restaurant)
-        # page_details = lift_table_detail(browser.open(link))
-        # all_details.append(page_details)
-    # return all_details
+    for restaurant in all_restaurants:
+        details = restaurant['detail_link']
+        detail_link = '{0}{1}'.format(BASE_URL, details)
+        browser=create_browser()
+        browser.open(INITIAL_URL)
+        browser.open(detail_link)
+        restaurant_markup = browser.get_current_page()
+        page_details = {}
+        page_details['details'] = lift_table_detail(restaurant_markup)
+        page_details['establishment_name'] = restaurant['name']
+        page_details['address'] = restaurant['address']
+        page_details['zipcode'] = restaurant['zip']
+        all_details.append(page_details)
+    return all_details
 
 def lift_table_detail(markup):
-    ''' TK.
+    ''' This lifts the table details from an individual restaurant's page in json format after receiving the page's markup, this function is called in get_details()
 
+    :param markup: the html markup of a restaurant page
+    :return area_dict: an array of information on each area's inspection history in a restaurant
+    :rtype: array
     '''
+    main_table = markup.find(id='ContentPlaceHolder1_GridView1')
 
+    area_rows = main_table.findAll('tr', recursive=False)[1:] # finds each area row
+    area_dict = []
+    inspections_dict = []
+    violations_dict = []
+    for row in area_rows:
+        row_cells = row.find_all('td')
+        area_name = row_cells[1]
+        inspection_table = row_cells[2]
+        i_row_cells = inspection_table.find_all('td')
+        for i_row in i_row_cells:
+            raw_link_cell = i_row_cells[0]
+            if(clean_html_tags(i_row_cells[0]) != "N/A"):
+                i_detail_link = i_row_cells[0].find_all('a')[0]['href']
+            else:
+                i_detail_link = None
+            inspection_date = i_row_cells[1]
+            inspection_type = i_row_cells[2]
+            inspection_demerits = i_row_cells[3]
+            inspection_info = {
+                "area_name": clean_html_tags(area_name),
+                "i_detail_link": i_detail_link,
+                "inspection_date": clean_html_tags(inspection_date),
+                "inspection_type": clean_html_tags(inspection_type),
+                "inspection_demerits": clean_html_tags(inspection_demerits),
+                "violations": scrape_violation_page(i_detail_link)
+            }
+        inspections_dict.append(inspection_info)
 
+        row_info = {
+            "inspection_info": inspections_dict
+        }
+    area_dict.append(row_info)
 
+    return area_dict
+
+def scrape_violation_page(link):
+    ''' This is called in lift_table_detail() to scrape the violation page, because each inspection has its own page for what the exact violation details were. And it stores them in an array as well.
+
+    :param link: the end of the link to each inspection page, obtained from scraping the individual restaurant page
+    :return violations_dict: an array of information about each violation
+    :rtype: array
+    '''
+    if(link != None):
+        violations_link = '{0}{1}'.format(BASE_URL, link)
+        browser=create_browser()
+        browser.open(INITIAL_URL)
+        browser.open(violations_link)
+        markup = browser.get_current_page()
+        main_table = markup.find(id='ContentPlaceHolder1_GridView1')
+        violation_rows = main_table.findAll('tr')[1:]
+        violations_dict = []
+        for row in violation_rows:
+            row_cells = row.find_all('td')
+            code = row_cells[0]
+            description = row_cells[1]
+            specific_infraction = row_cells[2]
+            demerits = row_cells[3]
+            violation = {
+                "code": clean_html_tags(code),
+                "description": clean_html_tags(description),
+                "specific_infraction": clean_html_tags(specific_infraction),
+                "demerits": clean_html_tags(demerits)
+            }
+            violations_dict.append(violation)
+        return violations_dict
+    else:
+        return None
+
+def clean_html_tags(string):
+    '''Cleans html tags from a string using the re.sub function
+
+    :param string: a variable with HTML tags to clean, will be casted to string if not already string.
+    :return clean_string: string without HTML tags
+    :rtype: string
+    '''
+    clean_string = re.sub(r'(<\/?[^>]+(>|$))', r'', str(string))
+    return clean_string.strip()
 
 def get_restaurant_list_page(page_number):
     '''Retrieves an single page of restaurant listings.
