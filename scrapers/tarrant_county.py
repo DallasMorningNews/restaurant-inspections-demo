@@ -12,12 +12,20 @@ from mechanicalsoup import StatefulBrowser
 
 BASE_URL = 'https://publichealth.tarrantcounty.com/foodinspection/'
 
-ALL_RESTAURANTS_LIST_URL = '{}search.aspx?name=&addr=&city=&zip='.format(BASE_URL)
+# INITIAL_URL = BASE_URL
+
+ALL_RESTAURANTS_LIST_URL = '{}search.aspx?name=&addr=&city=&zip='.format(
+    BASE_URL
+)
 
 EVENT_TARGET = 'ctl00$ContentPH1$GridView1'
 
+END_STR = 'rejected'
+
+
 def create_browser():
-    '''
+    '''TK.
+
     '''
     browser = StatefulBrowser(
         soup_config={'features': 'html.parser'}
@@ -34,13 +42,15 @@ def create_browser():
 
     return browser
 
+
 def get_all_restaurants():
-    '''
+    '''TK.
+
     '''
     browser = create_browser()
 
     # Load initial page to set cookie.
-    browser.open(BASE_URL)
+    # browser.open(BASE_URL)
 
     all_results = []
 
@@ -48,7 +58,8 @@ def get_all_restaurants():
     current_page = 1
     browser.open(ALL_RESTAURANTS_LIST_URL)
 
-    while 'error' not in browser.get_current_page().find('title').text.lower():
+    while END_STR not in browser.get_current_page().find('title').text.lower():
+        print(current_page)
         # Parse current result page and add to running results list.
         all_results = all_results + lift_table_from_page(
             browser.get_current_page()
@@ -58,8 +69,10 @@ def get_all_restaurants():
 
     return all_results
 
+
 def get_restaurant_list_page(page_number):
-    '''
+    '''TK.
+
     '''
     browser = create_browser()
 
@@ -80,7 +93,8 @@ def get_restaurant_list_page(page_number):
 
 
 def get_needed_page_range(desired_number):
-    '''
+    '''TK.
+
     '''
     decade_ends = [_ for _ in range(10, (desired_number + 1), 10)]
     decade_starts = [(_ - 9) for _ in decade_ends]
@@ -102,38 +116,74 @@ def get_needed_page_range(desired_number):
 
 
 def load_page(browser, new_page):
-    '''
+    '''TK.
+
     '''
     current_markup = browser.get_current_page()
 
-    # page_change_form = browser.select_form('#Form2')
+    page_change_form = browser.select_form('#aspnetForm')
 
     changer_payload = get_page_change_payload(current_markup)
 
     changer_payload['__EVENTARGUMENT'] = 'Page${}'.format(new_page)
 
-    # toxic_el = current_markup.find(id='ContentPlaceHolder1_Searchby_Button')
-    # toxic_el.extract()
+    toxic_el = current_markup.find(id='ctl00_ContentPH1_btnSearch')
+    toxic_el.extract()
 
-    # for k, v in changer_payload.items():
-    #     page_change_form.set(k, v)
+    for k, v in changer_payload.items():
+        page_change_form.set(k, v)
 
-    # browser.submit_selected()
+    browser.submit_selected()
 
 
 def get_page_change_payload(markup):
-    '''
+    '''TK.
+
     '''
     payload_id_fields = [
-        '__EVENTVALIDATION',
+        '__LASTFOCUS',
         '__VIEWSTATE',
         '__VIEWSTATEGENERATOR',
+        '__SCROLLPOSITIONX',
+        '__SCROLLPOSITIONY',
+        '__EVENTVALIDATION',
+        'ctl00_ContentPH1_txtName',
+        'ctl00_ContentPH1_txtAddress',
+        'ctl00_ContentPH1_txtCity',
+        'ctl00_ContentPH1_txtZip',
     ]
 
-    payload = {
+    defined_keys = {
         _: markup.find(id=_)['value']
         for _ in payload_id_fields
+        if 'value' in markup.find(id=_).attrs
     }
+
+    existing_keys = defined_keys.keys()
+
+    empty_keys = {
+        _: ''
+        for _ in payload_id_fields
+        if _ not in existing_keys
+    }
+
+    payload = {
+        **defined_keys,  # NOQA
+        **empty_keys
+    }
+
+    changed_keys = {}
+    keys_to_delete = []
+    for k, v in payload.items():
+        if k[:5] == 'ctl00':
+            changed_keys[k.replace('_', '$')] = v
+            keys_to_delete.append(k)
+
+    for k, v in changed_keys.items():
+        payload[k] = v
+
+    for _ in keys_to_delete:
+        del payload[_]
 
     payload['__EVENTTARGET'] = EVENT_TARGET
 
@@ -141,8 +191,8 @@ def get_page_change_payload(markup):
 
 
 def lift_table_from_page(markup):
-    '''
-    THIS ACTUALLY WORKS FOR TARRANT COUNTY ATM.
+    '''THIS ACTUALLY WORKS FOR TARRANT COUNTY ATM.
+
     '''
     table_matches = markup.find_all(id='ctl00_ContentPH1_GridView1')
 
@@ -167,21 +217,24 @@ def lift_table_from_page(markup):
         })
     return rows_formatted
 
+
 def get_details(all_restaurants):
-    '''
-    need to do a check for inspection category dropdown (if applicable), this is part of payload for that ctl00$ContentPH1$DropDownList1:
+    '''TK.
+
+    need to do a check for inspection category dropdown (if applicable).
+    this is part of payload for that ctl00$ContentPH1$DropDownList1:
     need to also do a check if table exists (bc some dont have any)
     '''
     all_details = []
     for restaurant in all_restaurants:
         details = restaurant['detail_link']
         detail_link = '{0}{1}'.format(BASE_URL, details)
-        browser=create_browser()
+        browser = create_browser()
         browser.open(INITIAL_URL)
         browser.open(detail_link)
         restaurant_markup = browser.get_current_page()
         page_details = {}
-        #page_details['details'] = lift_table_detail(restaurant_markup)
+        # page_details['details'] = lift_table_detail(restaurant_markup)
         page_details['establishment_name'] = restaurant['name']
         page_details['address'] = restaurant['address']
         page_details['city'] = restaurant['city']
@@ -191,15 +244,22 @@ def get_details(all_restaurants):
 
 
 def lift_table_detail(markup):
+    '''TK.
+
     '''
-    '''
+    pass
+
 
 def scrape_violation_page(link):
+    '''TK.
+
     '''
-    '''
+    pass
+
 
 def clean_html_tags(string):
-    '''
+    '''TK.
+
     '''
     clean_string = re.sub(r'(<\/?[^>]+(>|$))', r'', str(string))
     return clean_string.strip()
