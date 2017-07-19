@@ -12,8 +12,6 @@ from mechanicalsoup import StatefulBrowser
 
 BASE_URL = 'https://publichealth.tarrantcounty.com/foodinspection/'
 
-# INITIAL_URL = BASE_URL
-
 ALL_RESTAURANTS_LIST_URL = '{}search.aspx?name=&addr=&city=&zip='.format(
     BASE_URL
 )
@@ -48,9 +46,6 @@ def get_all_restaurants():
 
     '''
     browser = create_browser()
-
-    # Load initial page to set cookie.
-    # browser.open(BASE_URL)
 
     all_results = []
 
@@ -230,25 +225,99 @@ def get_details(all_restaurants):
         details = restaurant['detail_link']
         detail_link = '{0}{1}'.format(BASE_URL, details)
         browser = create_browser()
-        browser.open(INITIAL_URL)
+        browser.open(BASE_URL)
         browser.open(detail_link)
         restaurant_markup = browser.get_current_page()
         page_details = {}
-        # page_details['details'] = lift_table_detail(restaurant_markup)
+        # page_details['details'] = lift_table_detail(browser, restaurant_markup)
         page_details['establishment_name'] = restaurant['name']
         page_details['address'] = restaurant['address']
         page_details['city'] = restaurant['city']
         page_details['zipcode'] = restaurant['zip']
         all_details.append(page_details)
-    return all_details
+    return
+
+def test():
+    browser=create_browser()
+    browser.open("https://publichealth.tarrantcounty.com/foodinspection/detail.aspx?id=1248833")
+    markup = browser.get_current_page()
+    lift_table_detail(browser, markup)
 
 
-def lift_table_detail(markup):
+def lift_table_detail(browser, markup):
     '''TK.
 
     '''
-    pass
+    page_change_form = browser.select_form('#aspnetForm')
 
+    changer_payload = get_page_change_payload(markup)
+
+    drop_down = markup.find('select')
+    options = drop_down.find_all('option')
+    for option in options:
+        changer_payload['ctl00$ContentPH1$DropDownList1:'] += 1
+        for k, v in changer_payload.items():
+            page_change_form.set(k, v)
+        browser.submit_selected()
+        main_table = markup.find(id='ctl00_ContentPH1_GridView1')
+        print(main_table)
+
+
+    # drop_down = markup.find('select')
+    # options = drop_down.find_all('option')
+    # for option in options:
+    #     main_table = markup.find(id='ctl00_ContentPH1_GridView1')
+    #     print(main_table)
+    #     select = ""
+    # inspection_rows = main_table.findAll('tr', recursive=False)[1:]
+
+def change_dropdown_payload(markup):
+    payload_id_fields = [
+        '__EVENTTARGET',
+        '__EVENTARGUMENT',
+        '__LASTFOCUS',
+        '__VIEWSTATE',
+        '__VIEWSTATEGENERATOR',
+        '__VIEWSTATEENCRYPTED',
+        '__EVENTVALIDATION',
+        'ctl00$ContentPH1$DropDownList1'
+    ]
+##########
+    defined_keys = {
+        _: markup.find(id=_)['value']
+        for _ in payload_id_fields
+        if 'value' in markup.find(id=_).attrs
+    }
+
+    existing_keys = defined_keys.keys()
+
+    empty_keys = {
+        _: ''
+        for _ in payload_id_fields
+        if _ not in existing_keys
+    }
+
+    payload = {
+        **defined_keys,  # NOQA
+        **empty_keys
+    }
+
+    changed_keys = {}
+    keys_to_delete = []
+    for k, v in payload.items():
+        if k[:5] == 'ctl00':
+            changed_keys[k.replace('_', '$')] = v
+            keys_to_delete.append(k)
+
+    for k, v in changed_keys.items():
+        payload[k] = v
+
+    for _ in keys_to_delete:
+        del payload[_]
+
+    payload['__EVENTTARGET'] = EVENT_TARGET
+
+    return payload
 
 def scrape_violation_page(link):
     '''TK.
