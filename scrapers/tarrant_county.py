@@ -145,6 +145,25 @@ def get_needed_page_range(desired_number):
 
     return sorted(intermediate_jumps)
 
+def parse_violations(markup):
+    '''TK.
+
+    '''
+    rows_formatted = []
+    rows = markup.find_all('tr')[1:]
+    for row in rows:
+        row_cells = row.find_all('td')
+        violation_name = row_cells[0].text
+        violation_count = row_cells[1].text
+        violation_description = row_cells[2].text
+        violation_points = row_cells[3].text
+        rows_formatted.append({
+            'violation_name': violation_name,
+            'violation_count': violation_count,
+            'violation_description': violation_description,
+            'violation_points': violation_points
+        })
+    return rows_formatted
 
 def load_page(browser, new_page):
     '''TK.
@@ -264,6 +283,12 @@ def parse_restaurant_page(browser, raw_restaurant):
     for _ in all_inspections_for_place:
         all_full_reports.append(get_full_report(browser, detail_url, _))
 
+    for _ in all_full_reports:
+        _['name'] = raw_restaurant['name']
+        _['address'] = raw_restaurant['address']
+        _['city'] = raw_restaurant['city']
+        _['zip'] = raw_restaurant['zip']
+
     return all_full_reports
 
 
@@ -358,11 +383,15 @@ def get_full_report(browser, detail_url, inspection_meta):
 
     browser.submit_selected()
 
+    violation_grid = browser.get_current_page().find(id='ctl00_ContentPH1_GridView2')
+
     return {
-        'violations': browser.get_current_page().find(
-            id='ctl00_ContentPH1_GridView2'
-        ),
-        'meta': inspection_meta,
+        'violations': parse_violations(violation_grid),
+        'date': inspection_meta['date'],
+        'demerits': inspection_meta['demerits'],
+        'tag': inspection_meta['tag'],
+        'type': inspection_meta['type']
+        # 'meta': inspection_meta,
     }
 
 
@@ -383,132 +412,3 @@ def get_report_retrieval_payload(markup):
     payload['__EVENTTARGET'] = EVENT_TARGETS['report_retrieval']
 
     return payload
-
-
-# ############################# #
-# ARCHIVED & DISABLED FUNCTIONS #
-# ############################# #
-
-# def get_details(all_restaurants):
-#     '''TK.
-
-#     need to do a check for inspection category dropdown (if applicable).
-#     this is part of payload for that ctl00$ContentPH1$DropDownList1:
-#     need to also do a check if table exists (bc some dont have any)
-#     '''
-#     all_details = []
-#     for restaurant in all_restaurants:
-#         details = restaurant['detail_link']
-#         detail_link = '{0}{1}'.format(BASE_URL, details)
-#         browser = create_browser()
-#         browser.open(BASE_URL)
-#         browser.open(detail_link)
-#         restaurant_markup = browser.get_current_page()
-#         page_details = {}
-#         # page_details['details'] = lift_table_detail(
-#         #     browser,
-#         #     restaurant_markup
-#         # )
-#         page_details['establishment_name'] = restaurant['name']
-#         page_details['address'] = restaurant['address']
-#         page_details['city'] = restaurant['city']
-#         page_details['zipcode'] = restaurant['zip']
-#         all_details.append(page_details)
-#     return
-
-
-# def test():
-#     browser=create_browser()
-#     browser.open("https://publichealth.tarrantcounty.com/foodinspection/detail.aspx?id=1248833")
-#     markup = browser.get_current_page()
-#     lift_table_detail(browser, markup)
-#
-#
-# def lift_table_detail(browser, markup):
-#     '''TK.
-#
-#     '''
-#     page_change_form = browser.select_form('#aspnetForm')
-#
-#     changer_payload = get_page_change_payload(markup)
-#
-#     drop_down = markup.find('select')
-#     options = drop_down.find_all('option')
-#     for option in options:
-#         changer_payload['ctl00$ContentPH1$DropDownList1:'] += 1
-#         for k, v in changer_payload.items():
-#             page_change_form.set(k, v)
-#         browser.submit_selected()
-#         main_table = markup.find(id='ctl00_ContentPH1_GridView1')
-#         print(main_table)
-#
-#
-#     # drop_down = markup.find('select')
-#     # options = drop_down.find_all('option')
-#     # for option in options:
-#     #     main_table = markup.find(id='ctl00_ContentPH1_GridView1')
-#     #     print(main_table)
-#     #     select = ""
-#     # inspection_rows = main_table.findAll('tr', recursive=False)[1:]
-#
-# def change_dropdown_payload(markup):
-#     payload_id_fields = [
-#         '__EVENTTARGET',
-#         '__EVENTARGUMENT',
-#         '__LASTFOCUS',
-#         '__VIEWSTATE',
-#         '__VIEWSTATEGENERATOR',
-#         '__VIEWSTATEENCRYPTED',
-#         '__EVENTVALIDATION',
-#         'ctl00$ContentPH1$DropDownList1'
-#     ]
-# ##########
-#     defined_keys = {
-#         _: markup.find(id=_)['value']
-#         for _ in payload_id_fields
-#         if 'value' in markup.find(id=_).attrs
-#     }
-#
-#     existing_keys = defined_keys.keys()
-#
-#     empty_keys = {
-#         _: ''
-#         for _ in payload_id_fields
-#         if _ not in existing_keys
-#     }
-#
-#     payload = {
-#         **defined_keys,  # NOQA
-#         **empty_keys
-#     }
-#
-#     changed_keys = {}
-#     keys_to_delete = []
-#     for k, v in payload.items():
-#         if k[:5] == 'ctl00':
-#             changed_keys[k.replace('_', '$')] = v
-#             keys_to_delete.append(k)
-#
-#     for k, v in changed_keys.items():
-#         payload[k] = v
-#
-#     for _ in keys_to_delete:
-#         del payload[_]
-#
-#     payload['__EVENTTARGET'] = EVENT_TARGET
-#
-#     return payload
-
-# def scrape_violation_page(link):
-#     '''TK.
-#
-#     '''
-#     pass
-
-
-# def clean_html_tags(string):
-#     '''TK.
-#
-#     '''
-#     clean_string = `re.`sub(r'(<\/?[^>]+(>|$))', r'', str(string))
-#     return clean_string.strip()
