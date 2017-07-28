@@ -160,7 +160,7 @@ def parse_violations(markup):
         rows_formatted.append({
             'violation_name': violation_name,
             'violation_count': violation_count,
-            'violation_description': violation_description,
+            'violation_description': violation_description.replace(u'\xa0', u''),
             'violation_points': violation_points
         })
     return rows_formatted
@@ -288,7 +288,7 @@ def parse_restaurant_page(browser, raw_restaurant):
         _['address'] = raw_restaurant['address']
         _['city'] = raw_restaurant['city']
         _['zip'] = raw_restaurant['zip']
-
+        
     return all_full_reports
 
 
