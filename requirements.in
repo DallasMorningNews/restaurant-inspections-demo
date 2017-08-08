@@ -1,0 +1,5 @@
+beautifulsoup4==4.6.0
+Django==1.11.4
+mechanicalsoup==0.7.0
+requests==2.18.1
+pip-tools
