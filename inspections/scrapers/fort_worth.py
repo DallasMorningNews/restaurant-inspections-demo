@@ -1,5 +1,6 @@
 # Imports from python.  # NOQA
-# from datetime import datetime
+from copy import deepcopy
+from datetime import datetime
 import re
 
 
@@ -137,14 +138,6 @@ class FortWorthScraper(CookieBasedScraper):
         # Get the raw establishment detail object.
         raw_establishment = self.get_raw_establishment(establishment_object)
 
-        # return raw_inspections
-        #
-        # formatted_inspections = []
-        # for _ in raw_inspections:
-        #     formatted_inspections.append(
-        #         self.get_formatted_inspection(self.get_url('detail'), _)
-        #     )
-
         return {
             'establishment_name': raw_establishment['establishment_name'],
             'address': raw_establishment['address'],
@@ -195,55 +188,6 @@ class FortWorthScraper(CookieBasedScraper):
 
         return all_areas_inspections
 
-    # def get_raw_inspections_for_tag(self, detail_url, tag):
-    #     '''TK.
-    #
-    #     '''
-    #     self.set_url('detail', detail_url)
-    #     current_markup = self.open_url('detail')
-    #
-    #     tag_change_form = self.browser.select_form('#aspnetForm')
-    #
-    #     changer_payload = self.get_tag_page_payload(current_markup)
-    #
-    #     changer_payload['__EVENTARGUMENT'] = ''
-    #
-    #     changer_payload['ctl00$ContentPH1$DropDownList1'] = tag['value']
-    #
-    #     for k, v in changer_payload.items():
-    #         tag_change_form.set(k, v)
-    #
-    #     self.browser.submit_selected()
-    #
-    #     raw_inspections_for_tag = []
-    #
-    #     inspection_table_for_tag = self.browser.get_current_page().find(
-    #         id='ctl00_ContentPH1_GridView1'
-    #     )
-    #
-    #     records = []
-    #     if inspection_table_for_tag is not None:
-    #         raw_inspections_for_tag = inspection_table_for_tag.find_all('tr')
-    #
-    #     if len(raw_inspections_for_tag) > 0:
-    #         for _ in raw_inspections_for_tag[1:]:
-    #             tds = _.find_all('td')
-    #
-    #             records.append({
-    #                 'date': datetime.strptime(
-    #                     tds[0].text,
-    #                     '%m/%d/%Y'
-    #                 ).strftime('%Y-%m-%d'),
-    #                 'type': tds[1].text,
-    #                 'demerits': tds[2].text,
-    #                 'detail_postback': tds[3].find('a')['href'],
-    #                 'tag': tag['raw_text'],
-    #                 'dropdown_choice': tag['value'],
-    #                 'order_in_tag': 0,
-    #             })
-    #
-    #     return records
-
     def get_raw_inspection(self, inspection_object):
         '''TK.
 
@@ -264,19 +208,9 @@ class FortWorthScraper(CookieBasedScraper):
 
         violation_rows = main_table.findAll('tr')[1:]
 
-        violations_list = []
-        for row in violation_rows:
-            row_cells = row.find_all('td')
-
-            violation = {
-                'code': row_cells[0].text.strip(),
-                'specific_infraction': row_cells[2].text.strip(),
-                'demerits': row_cells[3].text.strip(),
-                'description': row_cells[1].text.strip(),
-            }
-            violations_list.append(violation)
-
-        inspection_object['violations'] = violations_list
+        inspection_object['violations'] = [
+            self.get_formatted_violation(_) for _ in violation_rows
+        ]
 
         return inspection_object
 
@@ -286,25 +220,62 @@ class FortWorthScraper(CookieBasedScraper):
         '''
         raw_inspection = self.get_raw_inspection(inspection_object)
 
-        return raw_inspection
+        if raw_inspection is None:
+            return None
 
-    # def get_formatted_violation(self, violation_el):
-    #     row_cells = violation_el.find_all('td')
-    #
-    #     violation_name = row_cells[0].text
-    #     violation_count = row_cells[1].text
-    #     violation_description = row_cells[2].text
-    #     violation_points = row_cells[3].text
-    #
-    #     return {
-    #         'violation_name': violation_name,
-    #         'violation_count': violation_count,
-    #         'violation_description': violation_description.replace(
-    #             u'\xa0',
-    #             u''
-    #         ),
-    #         'violation_points': violation_points
-    #     }
+        formatted_inspection = deepcopy(raw_inspection)
+
+        raw_date = raw_inspection.get('date', None)
+        raw_demerits = raw_inspection.get('demerits', None)
+
+        print(raw_date)
+
+        formatted_date = None
+        if raw_date is not None:
+            date_obj = datetime.strptime(raw_date, '%m/%d/%Y')
+            formatted_date = date_obj.strftime('%Y-%m-%d')
+
+            print(formatted_date)
+
+        formatted_demerits = None
+        if raw_demerits is not None:
+            formatted_demerits = int(raw_demerits)
+
+        formatted_inspection['date'] = formatted_date
+        formatted_inspection['demerits'] = formatted_demerits
+
+        return formatted_inspection
+
+    def get_raw_violation(self, violation_object):
+        '''TK.
+
+        '''
+        cells = violation_object.find_all('td')
+
+        return {
+            'code': cells[0].text.strip(),
+            'specific_infraction': cells[2].text.strip(),
+            'demerits': cells[3].text.strip(),
+            'description': cells[1].text.strip(),
+        }
+
+    def get_formatted_violation(self, violation_object):
+        '''TK.
+
+        '''
+        raw_violation = self.get_raw_violation(violation_object)
+
+        formatted_violation = deepcopy(raw_violation)
+
+        raw_demerits = raw_violation.get('demerits', None)
+
+        formatted_demerits = None
+        if raw_demerits is not None:
+            formatted_demerits = int(raw_demerits)
+
+        formatted_violation['demerits'] = formatted_demerits
+
+        return formatted_violation
 
     def load_list_page(self, new_page):
         '''Loads the specified restaurant list page.
@@ -376,42 +347,6 @@ class FortWorthScraper(CookieBasedScraper):
 
         return payload
 
-    # def get_tag_page_payload(self, markup):
-    #     '''TK.
-    #
-    #     '''
-    #     payload_id_fields = [
-    #         '__LASTFOCUS',
-    #         '__VIEWSTATE',
-    #         '__VIEWSTATEGENERATOR',
-    #         '__VIEWSTATEENCRYPTED',
-    #         '__EVENTVALIDATION',
-    #     ]
-    #
-    #     payload = self.retrieve_form_payload(markup, payload_id_fields)
-    #
-    #     payload['__EVENTTARGET'] = EVENT_TARGETS['inspection_tag_change']
-    #
-    #     return payload
-    #
-    # def get_inspection_page_payload(self, markup):
-    #         '''TK.
-    #
-    #         '''
-    #         payload_id_fields = [
-    #             '__LASTFOCUS',
-    #             '__VIEWSTATE',
-    #             '__VIEWSTATEGENERATOR',
-    #             '__VIEWSTATEENCRYPTED',
-    #             '__EVENTVALIDATION',
-    #         ]
-    #
-    #         payload = self.retrieve_form_payload(markup, payload_id_fields)
-    #
-    #         payload['__EVENTTARGET'] = EVENT_TARGETS['report_retrieval']
-    #
-    #         return payload
-    #
     def parse_raw_establishment_list(self, markup):
         '''Extracts the restaurant results table from a given page's markup.
 
