@@ -4,16 +4,32 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+appnope==0.1.0            # via ipython
 beautifulsoup4==4.6.0
 certifi==2017.7.27.1      # via requests
 chardet==3.0.4            # via requests
 click==6.7                # via pip-tools
+decorator==4.1.2          # via ipython, traitlets
+dj-database-url==0.4.2
+django-dotenv==1.4.1
 django==1.11.4
 first==2.0.1              # via pip-tools
 idna==2.5                 # via requests
+ipython-genutils==0.2.0   # via traitlets
+ipython==6.1.0
+jedi==0.10.2              # via ipython
 mechanicalsoup==0.7.0
+pexpect==4.2.1            # via ipython
+pickleshare==0.7.4        # via ipython
 pip-tools==1.9.0
+prompt-toolkit==1.0.15    # via ipython
+psycopg2==2.7.3
+ptyprocess==0.5.2         # via pexpect
+pygments==2.2.0           # via ipython
 pytz==2017.2              # via django
 requests==2.18.1
-six==1.10.0               # via mechanicalsoup, pip-tools
+simplegeneric==0.8.1      # via ipython
+six==1.10.0               # via mechanicalsoup, pip-tools, prompt-toolkit, traitlets
+traitlets==4.3.2          # via ipython
 urllib3==1.21.1           # via requests
+wcwidth==0.1.7            # via prompt-toolkit
