@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     # 'whitenoise.runserver_nostatic',  # static file optimizations
     'django.contrib.staticfiles',
 
+    # Third-party apps
+    'nested_admin',
+
     # Project apps
     'inspections',
 ]
