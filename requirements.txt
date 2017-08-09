@@ -12,6 +12,7 @@ click==6.7                # via pip-tools
 decorator==4.1.2          # via ipython, traitlets
 dj-database-url==0.4.2
 django-dotenv==1.4.1
+django-nested-admin==3.0.20
 django==1.11.4
 first==2.0.1              # via pip-tools
 idna==2.5                 # via requests
@@ -26,10 +27,11 @@ prompt-toolkit==1.0.15    # via ipython
 psycopg2==2.7.3
 ptyprocess==0.5.2         # via pexpect
 pygments==2.2.0           # via ipython
+python-monkey-business==1.0.0  # via django-nested-admin
 pytz==2017.2              # via django
 requests==2.18.1
 simplegeneric==0.8.1      # via ipython
-six==1.10.0               # via mechanicalsoup, pip-tools, prompt-toolkit, traitlets
+six==1.10.0               # via mechanicalsoup, pip-tools, prompt-toolkit, python-monkey-business, traitlets
 traitlets==4.3.2          # via ipython
 urllib3==1.21.1           # via requests
 wcwidth==0.1.7            # via prompt-toolkit

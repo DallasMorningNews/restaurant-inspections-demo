@@ -2,6 +2,7 @@ beautifulsoup4==4.6.0
 Django==1.11.4
 dj-database-url~=0.4
 django-dotenv~=1.4
+django-nested-admin~=3.0
 ipython
 mechanicalsoup==0.7.0
 requests==2.18.1
