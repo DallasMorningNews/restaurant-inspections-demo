@@ -1,4 +1,8 @@
-# Imports from inspections.  # NOQA
+# Imports from python.  # NOQA
+from datetime import datetime
+
+
+# Imports from inspections.
 from inspections.scrapers import BulkDataScraper
 
 
@@ -65,47 +69,50 @@ class DallasScraper(BulkDataScraper):
             establishment object, with sub-objects for each violation.
         :rtype: object
         '''
-        simple_field_mapping = {
-            # Source data field: New-object data field
-            '2f7u_region_code': ':@computed_region_2f7u_b5gs',
-            'sjyw_region_code': ':@computed_region_sjyw_rtbm',
-            'inspection_date': 'inspection_date',
-            'inspection_score': 'inspection_score',
-            'inspection_type': 'inspection_type',
-            'inspection_year': 'inspection_year',
-            'city': 'lat_long_city',
-            'state': 'lat_long_state',
-            'zip': 'lat_long_zip',
-            'month': 'month',
-            'establishment_name': 'program_identifier',
-            'street_address': 'street_address',
-            'street_name': 'street_name',
-            'street_number': 'street_number',
-            'street_type': 'street_type',
-            'street_unit': 'street_unit',
-        }
-
         formatted_establishment = {
-            # Remove second arg from `xx.get(yy, None)` as None is
-            # the default.
-            v: raw_establishment.get(k)
-            for k, v in simple_field_mapping.items()
+            'establishment_name': raw_establishment.get('program_identifier'),
+            'address': raw_establishment.get('site_address', ''),
+            'city': 'Dallas',
+            'zip': raw_establishment.get('zip'),
         }
 
-        if 'coordinates' in raw_establishment.get('lat_long', {}):
-            coords = raw_establishment.get('lat_long')['coordinates']
-        else:
-            coords = []
-        formatted_establishment['lat_lon'] = coords
+        inspection_list = []
 
-        formatted_establishment['street_direction'] = raw_establishment.get(
-            'street_direction',
-            ''
-        ).strip(),
+        raw_date = raw_establishment.get('insp_date', None)
+        raw_score = raw_establishment.get('score', None)
 
-        formatted_establishment['violations'] = self.format_violations(
-            raw_establishment
-        )
+        inspection_date = None
+        if raw_date is not None:
+            date_obj = datetime.strptime(raw_date, '%Y-%m-%dT%H:%M:%S.%f')
+            inspection_date = date_obj.strftime('%Y-%m-%d')
+
+        initial_score = None
+        if raw_score is not None:
+            initial_score = int(raw_score)
+
+        inspection_list.append({
+            'inspection_type': raw_establishment['type'],
+            'date': inspection_date,
+            'raw_score': initial_score,
+            'violations': self.format_violations(raw_establishment),
+        })
+
+        formatted_establishment['inspections'] = inspection_list
+
+        # if 'coordinates' in raw_establishment.get('lat_long', {}):
+        #     coords = raw_establishment.get('lat_long')['coordinates']
+        # else:
+        #     coords = []
+        # formatted_establishment['lat_lon'] = coords
+        #
+        # formatted_establishment['street_direction'] = raw_establishment.get(
+        #     'street_direction',
+        #     ''
+        # ).strip(),
+        #
+        # formatted_establishment['violations'] = self.format_violations(
+        #     raw_establishment
+        # )
 
         return formatted_establishment
 
@@ -127,17 +134,17 @@ class DallasScraper(BulkDataScraper):
             # appears to have been removed sometime before August 2017.
 
             src_fields = {
-                'points': 'violation{}_points'.format(_),
+                'points_deducted': 'violation{}_points'.format(_),
                 # points_a: 'violation{}_points'.format(_),
                 # points_b: 'violation_points_{}'.format(_),
-                'description': 'violation{}_description'.format(_),
+                'infraction_category': 'violation{}_description'.format(_),
                 # description_a: 'violation{}_description'.format(_),
                 # description_b: 'violation_description_{}'.format(_),
-                'memo': 'violation{}_memo'.format(_),
-                'text': 'violation{}_text'.format(_),
+                'inspector_comment': 'violation{}_memo'.format(_),
+                'statute_citation': 'violation{}_text'.format(_),
             }
 
-            if src_fields['points'] in raw_establishment:
+            if src_fields['points_deducted'] in raw_establishment:
                 # description = ''
                 # if description_a in raw_establishment:
                 #     description = raw_establishment.get(
@@ -148,13 +155,19 @@ class DallasScraper(BulkDataScraper):
                 #         src_fields['description_b']
                 #     )
 
-                description = raw_establishment.get(src_fields['description'])
-
                 violations.append({
-                    'points': raw_establishment.get(src_fields['points']),
-                    'memo': raw_establishment.get(src_fields['memo']),
-                    'text': raw_establishment.get(src_fields['text']),
-                    'description': description,
+                    'points_deducted': raw_establishment.get(
+                        src_fields['points_deducted']
+                    ),
+                    'inspector_comment': raw_establishment.get(
+                        src_fields['inspector_comment']
+                    ),
+                    'statute_citation': raw_establishment.get(
+                        src_fields['statute_citation']
+                    ),
+                    'infraction_category': raw_establishment.get(
+                        src_fields['infraction_category']
+                    ),
                 })
 
         return violations
