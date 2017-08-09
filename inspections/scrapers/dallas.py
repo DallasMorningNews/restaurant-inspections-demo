@@ -91,7 +91,7 @@ class DallasScraper(BulkDataScraper):
             initial_score = int(raw_score)
 
         inspection_list.append({
-            'type': raw_establishment['type'],
+            'inspection_type': raw_establishment['type'],
             'date': inspection_date,
             'raw_score': initial_score,
             'violations': self.format_violations(raw_establishment),
@@ -134,17 +134,17 @@ class DallasScraper(BulkDataScraper):
             # appears to have been removed sometime before August 2017.
 
             src_fields = {
-                'points': 'violation{}_points'.format(_),
+                'points_deducted': 'violation{}_points'.format(_),
                 # points_a: 'violation{}_points'.format(_),
                 # points_b: 'violation_points_{}'.format(_),
-                'description': 'violation{}_description'.format(_),
+                'infraction_category': 'violation{}_description'.format(_),
                 # description_a: 'violation{}_description'.format(_),
                 # description_b: 'violation_description_{}'.format(_),
-                'memo': 'violation{}_memo'.format(_),
-                'text': 'violation{}_text'.format(_),
+                'inspector_comment': 'violation{}_memo'.format(_),
+                'statute_citation': 'violation{}_text'.format(_),
             }
 
-            if src_fields['points'] in raw_establishment:
+            if src_fields['points_deducted'] in raw_establishment:
                 # description = ''
                 # if description_a in raw_establishment:
                 #     description = raw_establishment.get(
@@ -155,13 +155,19 @@ class DallasScraper(BulkDataScraper):
                 #         src_fields['description_b']
                 #     )
 
-                description = raw_establishment.get(src_fields['description'])
-
                 violations.append({
-                    'points': raw_establishment.get(src_fields['points']),
-                    'memo': raw_establishment.get(src_fields['memo']),
-                    'text': raw_establishment.get(src_fields['text']),
-                    'description': description,
+                    'points_deducted': raw_establishment.get(
+                        src_fields['points_deducted']
+                    ),
+                    'inspector_comment': raw_establishment.get(
+                        src_fields['inspector_comment']
+                    ),
+                    'statute_citation': raw_establishment.get(
+                        src_fields['statute_citation']
+                    ),
+                    'infraction_category': raw_establishment.get(
+                        src_fields['infraction_category']
+                    ),
                 })
 
         return violations
