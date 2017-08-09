@@ -1,0 +1,9 @@
+beautifulsoup4==4.6.0
+Django==1.11.4
+dj-database-url~=0.4
+django-dotenv~=1.4
+ipython
+mechanicalsoup==0.7.0
+requests==2.18.1
+pip-tools
+psycopg2~=2.6
