@@ -128,9 +128,7 @@ class FortWorthScraper(CookieBasedScraper):
             'zip': establishment_object['zip'],
         }
 
-        page_details['inspections'] = self.parse_inspection(
-            restaurant_markup
-        )
+        page_details['inspections'] = self.parse_inspection(restaurant_markup)
 
         return page_details
 
@@ -176,7 +174,7 @@ class FortWorthScraper(CookieBasedScraper):
                     detail_link = inspection_cells[0].find('a')['href']
 
                 inspection = {
-                    'area_name': area_name,
+                    'area': area_name,
                     'detail_link': detail_link,
                     'date': inspection_cells[1].text.strip(),
                     'inspection_type': inspection_cells[2].text.strip(),
@@ -192,10 +190,11 @@ class FortWorthScraper(CookieBasedScraper):
         '''TK.
 
         '''
-        if 'detail_link' not in inspection_object:
-            return None
+        inspection_detail = inspection_object.pop('detail_link', None)
 
-        inspection_detail = inspection_object['detail_link']
+        if inspection_detail is None:
+            inspection_object['violations'] = []
+            return inspection_object
 
         self.set_url(
             'inspection_detail',
@@ -206,7 +205,7 @@ class FortWorthScraper(CookieBasedScraper):
 
         main_table = inspection_markup.find(id='ContentPlaceHolder1_GridView1')
 
-        violation_rows = main_table.findAll('tr')[1:]
+        violation_rows = main_table.find_all('tr', recursive=False)[1:]
 
         inspection_object['violations'] = [
             self.get_formatted_violation(_) for _ in violation_rows
@@ -223,26 +222,22 @@ class FortWorthScraper(CookieBasedScraper):
         if raw_inspection is None:
             return None
 
-        formatted_inspection = deepcopy(raw_inspection)
-
         raw_date = raw_inspection.get('date', None)
-        raw_demerits = raw_inspection.get('demerits', None)
+        raw_demerits = raw_inspection.pop('demerits', None)
 
-        print(raw_date)
+        formatted_inspection = deepcopy(raw_inspection)
 
         formatted_date = None
         if raw_date is not None:
             date_obj = datetime.strptime(raw_date, '%m/%d/%Y')
             formatted_date = date_obj.strftime('%Y-%m-%d')
 
-            print(formatted_date)
-
         formatted_demerits = None
         if raw_demerits is not None:
             formatted_demerits = int(raw_demerits)
 
         formatted_inspection['date'] = formatted_date
-        formatted_inspection['demerits'] = formatted_demerits
+        formatted_inspection['raw_score'] = formatted_demerits
 
         return formatted_inspection
 
@@ -253,10 +248,10 @@ class FortWorthScraper(CookieBasedScraper):
         cells = violation_object.find_all('td')
 
         return {
-            'code': cells[0].text.strip(),
-            'specific_infraction': cells[2].text.strip(),
+            'statute_citation': cells[0].text.strip(),
+            'inspector_comment': cells[2].text.strip(),
             'demerits': cells[3].text.strip(),
-            'description': cells[1].text.strip(),
+            'infraction_category': cells[1].text.strip(),
         }
 
     def get_formatted_violation(self, violation_object):
@@ -265,15 +260,15 @@ class FortWorthScraper(CookieBasedScraper):
         '''
         raw_violation = self.get_raw_violation(violation_object)
 
-        formatted_violation = deepcopy(raw_violation)
+        raw_demerits = raw_violation.pop('demerits', None)
 
-        raw_demerits = raw_violation.get('demerits', None)
+        formatted_violation = deepcopy(raw_violation)
 
         formatted_demerits = None
         if raw_demerits is not None:
             formatted_demerits = int(raw_demerits)
 
-        formatted_violation['demerits'] = formatted_demerits
+        formatted_violation['points_deducted'] = formatted_demerits
 
         return formatted_violation
 
