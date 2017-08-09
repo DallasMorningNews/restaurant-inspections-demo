@@ -1,4 +1,6 @@
+# Imports from Django.  # NOQA
 from django.db import models
+
 
 # one for every establishment
 class Restaurant(models.Model):
@@ -11,6 +13,7 @@ class Restaurant(models.Model):
     def __unicode__(self):
         return self.establishment_name
 
+
 # each restaurant has as many inspection classes as they've had inspections
 class Inspection(models.Model):
     restaurant = models.ForeignKey(Restaurant)
@@ -22,7 +25,8 @@ class Inspection(models.Model):
     def __unicode__(self):
         return self.restaurant + ", " + self.date + ", " + self.raw_score
 
-# each inspection has as many classes of violations as they had violations (possibly, we can change this logic)
+# each inspection has as many classes of violations as they had violations
+# (possibly, we can change this logic)
 class Violations(models.Model):
     inspection = models.ForeignKey(Inspection)
     points_deducted = models.IntegerField()
