@@ -2,7 +2,7 @@
 from datetime import datetime
 
 
-# Imports from Django.  # NOQA
+# Imports from Django.
 from django.db import models
 
 
@@ -87,7 +87,7 @@ class Inspection(models.Model):
         )
 
 
-class Violations(models.Model):
+class Violation(models.Model):
     '''TK.
 
     Each inspection has one violation instance for each violation that
