@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="{% static 'inspections/css/header.css' %}" />
+    </head>
+
+    <body>
+        <div>
+            <a href="https://www.dallasnews.com" target="_blank"><span>The Dallas Morning News</span></a>
+            <div>
+
+                <h4>RESTAURANT HEALTH INSPECTIONS</h4>
+
+                <div>
+                    <p>B</p>
+                    <p>89/100</p>
+                </div>
+
+                <div>
+                    <h2>{{ establishment.establishment_name }}</h2>
+                    <p>420 Mango St. Dallass, TX 75214</p>
+                    <p>Last inspected: 6/9/2017</p>
+                </div>
+
+                <div>
+                    <p>Choose an inspection:</p>
+                    <select>
+                        <option value="0">6/9/2017</option>
+                        <option value="1">4/20/2016</option>
+                    </select>
+                </div>
+
+                <div>
+                    <h3>Inspection date: 12/22/1995</h3>
+                    <p>Score: C (79/100)</p>
+                    <p>Area:
+                        <select>
+                            <option value="area1">Restaurant</option>
+                            <option value="area2">Gas Station</option>
+                        </select>
+                    </p>
+
+                    <h4>Violations</h4>
+                    <table>
+                        <tr>
+                            <th align="left">Points</th>
+                            <th align="left">Name</th>
+                            <th align="left">Details</th>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>smelly soap but not in the good way :(</td>
+                            <td>buy better smelling soap</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
