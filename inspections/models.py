@@ -39,6 +39,18 @@ class Establishment(models.Model):
             return self.inspection_set.latest().date
         return None
 
+    @property
+    def latest_inspection_letter_grade(self):
+        if self.inspection_set.count() > 0:
+            return self.inspection_set.latest().normalized_letter_grade
+        return "?"
+
+    @property
+    def latest_inspection_numeric_grade(self):
+        if self.inspection_set.count() > 0:
+            return self.inspection_set.latest().normalized_numeric_grade
+        return "--"
+
 
 class Inspection(models.Model):
     '''TK.
@@ -79,6 +91,7 @@ class Inspection(models.Model):
 
     class Meta:
         get_latest_by = "date"
+        ordering = ['-date']
 
     def __unicode__(self):
         if self.area:
@@ -94,6 +107,20 @@ class Inspection(models.Model):
             datetime.strftime(self.date, '%Y-%m-%d'),
             self.normalized_letter_grade
         )
+
+    @property
+    def displayed_violations(self):
+        if self.violation_set.count() == 0:
+            return []
+
+        violations = []
+        for _ in self.violation_set.all():
+            if _.points_deducted == 0 and _.additional_information:
+                return []
+            else:
+                violations.append(_)
+
+        return violations
 
 
 class Violation(models.Model):
