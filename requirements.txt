@@ -15,6 +15,7 @@ django-dotenv==1.4.1
 django-nested-admin==3.0.20
 django==1.11.4
 first==2.0.1              # via pip-tools
+gunicorn==19.7.1
 idna==2.5                 # via requests
 ipython-genutils==0.2.0   # via traitlets
 ipython==6.1.0
@@ -35,3 +36,4 @@ six==1.10.0               # via mechanicalsoup, pip-tools, prompt-toolkit, pytho
 traitlets==4.3.2          # via ipython
 urllib3==1.21.1           # via requests
 wcwidth==0.1.7            # via prompt-toolkit
+whitenoise==3.3.0
