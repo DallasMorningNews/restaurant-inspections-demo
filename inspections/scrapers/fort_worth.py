@@ -125,7 +125,7 @@ class FortWorthScraper(CookieBasedScraper):
         page_details = {
             'establishment_name': establishment_object['name'],
             'address': establishment_object['address'],
-            'zip': establishment_object['zip'],
+            'zip_code': establishment_object['zip_code'],
         }
 
         page_details['inspections'] = self.parse_inspection(restaurant_markup)
@@ -140,7 +140,7 @@ class FortWorthScraper(CookieBasedScraper):
             'establishment_name': raw_establishment['establishment_name'],
             'address': raw_establishment['address'],
             'city': 'Fort Worth',
-            'zip': raw_establishment['zip'],
+            'zip_code': raw_establishment['zip_code'],
             'inspections': [
                 self.get_formatted_inspection(_)
                 for _ in raw_establishment['inspections']
@@ -356,7 +356,7 @@ class FortWorthScraper(CookieBasedScraper):
             list: A list of restaurant objects. Each has 5 string values:
                 name: Restaurant's name (all caps/some chains have store #).
                 address: Restaurant's parsed address, without extra spaces.
-                zip: Restaurant's stated ZIP code.
+                zip_code: Restaurant's stated ZIP code.
                 detail_link: URL to restaurant's detail page.
                 map_link: URL to map of restaurant. Missing on some entries.
         '''
@@ -386,7 +386,7 @@ class FortWorthScraper(CookieBasedScraper):
                 rows_formatted.append({
                     'name': restaurant_name,
                     'address': restaurant_address,
-                    'zip': restaurant_zip,
+                    'zip_code': restaurant_zip,
                     'detail_link': detail_link,
                     'map_link': map_link,
                 })
