@@ -4,58 +4,182 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <link rel="stylesheet" href="{% static 'inspections/css/header.css' %}" />
+        <link rel="stylesheet" href="https://cloud.typography.com/6922714/7642152/css/fonts.css">
+
+        <style type="text/css">
+            #content {
+                font-family: "Gotham A", "Gotham B", Arial, sans-serif;
+                font-size: 20px;
+            }
+
+            #gradebox {
+                border: 5px solid #0175ba;
+                width: 200px;
+                float: left;
+                text-align: center;
+                margin: 0 10px 5px 0;
+                background-color: #0185d3;
+                color: white;
+            }
+            .grade {
+                font-size: 169px;
+                font-weight: bold;
+                margin: 2px 0 0 0;
+                line-height: 160px;
+            }
+            .score {
+                font-size: 24px;
+                margin: 0 0 5px 0;
+            }
+
+            h2 {
+                margin: 0;
+                font-size: 42px;
+            }
+            .details p {
+                margin: 0;
+            }
+
+            #dropdown {
+                margin-top: 10px;
+                float:left;
+                clear:both;
+            }
+            #dropdown p {
+                margin-bottom: 0;
+                display: inline;
+            }
+            #inspectionselect {
+                width: 169px;
+                font-size: 15px;
+                font-family: "Gotham A", "Gotham B", Arial, sans-serif;
+            }
+
+            #inspectiondetails {
+                float: left;
+                clear: both;
+            }
+            h3 {
+                margin-bottom: 0;
+            }
+            #inspectiondetails p {
+                font-size: 16px;
+            }
+
+            #areas {
+                font-family: "Gotham A", "Gotham B", Arial, sans-serif;
+                font-size: 16px;
+            }
+
+            h4 {
+                margin-bottom: 10px;
+            }
+            table {
+                font-size: 16px;
+                line-height: 24px;
+                border-collapse: collapse;
+                margin: 0 10px 0 10px;
+            }
+            tr:nth-child(1) {
+                border-bottom: 1px solid #d7d7d7;
+                padding: 12px 12px;
+            }
+            td:first-child, th:first-child {
+                padding: 0 0;
+            }
+            td {
+                 padding: 15px 15px;
+            }
+            th {
+                padding: 0 12px;
+            }
+
+            @media screen and (max-width: 400px) {
+                #content {
+                    font-size: 15px;
+                }
+                #gradebox {
+                    width: 100px;
+                    border: 3px solid #0175ba;
+                }
+                .grade {
+                    font-size: 72px;
+                    line-height: 70px;
+                }
+                .score {
+                    font-size: 15px;
+                }
+                h2 {
+                    font-size: 24px;
+                }
+                #inspection {
+                    font-size: 15px;
+                    width: 150px;
+                }
+                table {
+                    font-size: 12px;
+                }
+            }
+
+            a {
+                color: #0185d3;
+            }
+        </style>
     </head>
 
     <body>
-        <div>
-            <a href="https://www.dallasnews.com" target="_blank"><span>The Dallas Morning News</span></a>
-            <div>
+        <header class="bg-black clearfix">
+            <a class="logo" href="https://www.dallasnews.com" id="top"><span class="sr-only">The Dallas Morning News</span></a>
+        </header>
 
-                <h4>RESTAURANT HEALTH INSPECTIONS</h4>
+        <div id="content">
 
-                <div>
-                    <p>B</p>
-                    <p>89/100</p>
-                </div>
+            <h4>RESTAURANT HEALTH INSPECTIONS</h4>
 
-                <div>
-                    <h2>{{ establishment.establishment_name }}</h2>
-                    <p>420 Mango St. Dallass, TX 75214</p>
-                    <p>Last inspected: 6/9/2017</p>
-                </div>
+            <div id="gradebox">
+                <p class="grade">B</p>
+                <p class="score">89/100</p>
+            </div>
 
-                <div>
-                    <p>Choose an inspection:</p>
-                    <select>
-                        <option value="0">6/9/2017</option>
-                        <option value="1">4/20/2016</option>
+            <div class="details">
+                <h2>Olive Garden #69</h2>
+                <p>420 Mango St. Dallass, TX 75214</p>
+                <p>Last inspected: 6/9/2017</p>
+            </div>
+
+            <div id="dropdown">
+                <p>Choose an inspection:</p>
+                <select id="inspectionselect">
+                    <option value="0">6/9/2017</option>
+                    <option value="1">4/20/2016</option>
+                </select>
+            </div>
+
+            <div id="inspectiondetails">
+                <h3>Inspection date: 12/22/1995</h3>
+
+                <p>Score: C (79/100)</p>
+                <p>Area:
+                    <select id="areas">
+                        <option value="area1">Restaurant</option>
+                        <option value="area2">Gas Station</option>
                     </select>
-                </div>
+                </p>
 
-                <div>
-                    <h3>Inspection date: 12/22/1995</h3>
-                    <p>Score: C (79/100)</p>
-                    <p>Area:
-                        <select>
-                            <option value="area1">Restaurant</option>
-                            <option value="area2">Gas Station</option>
-                        </select>
-                    </p>
+                <h4>Violations</h4>
 
-                    <h4>Violations</h4>
-                    <table>
-                        <tr>
-                            <th align="left">Points</th>
-                            <th align="left">Name</th>
-                            <th align="left">Details</th>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td>smelly soap but not in the good way :(</td>
-                            <td>buy better smelling soap</td>
-                        </tr>
-                    </table>
-                </div>
+                <table id ="violations">
+                    <tr>
+                        <th align="left">Points</th>
+                        <th align="left">Name</th>
+                        <th align="left">Details</th>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>smelly soap but not in the good way :(</td>
+                        <td>buy better smelling soap</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </body>
