@@ -33,6 +33,12 @@ class Establishment(models.Model):
             self.city
         )
 
+    @property
+    def latest_inspection_date(self):
+        if self.inspection_set.count() > 0:
+            return self.inspection_set.latest().date.strftime(self.date, '%Y-%m-%d')
+        return None
+
 
 class Inspection(models.Model):
     '''TK.
@@ -70,6 +76,9 @@ class Inspection(models.Model):
         choices=LETTER_GRADE_CHOICES,
         max_length=1
     )
+
+    class Meta:
+        get_latest_by = "date"
 
     def __unicode__(self):
         if self.area:
