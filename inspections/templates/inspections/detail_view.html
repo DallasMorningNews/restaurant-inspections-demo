@@ -137,49 +137,57 @@
             <h4>RESTAURANT HEALTH INSPECTIONS</h4>
 
             <div id="gradebox">
-                <p class="grade">B</p>
-                <p class="score">89/100</p>
+                <p class="grade">{{establishment.latest_inspection_letter_grade}}</p>
+                <p class="score">{{establishment.latest_inspection_numeric_grade}}/100</p>
             </div>
 
             <div class="details">
-                <h2>Olive Garden #69</h2>
-                <p>420 Mango St. Dallass, TX 75214</p>
-                <p>Last inspected: 6/9/2017</p>
+                <h2>{{establishment.establishment_name}}</h2>
+                <p>{{establishment.address}}</p>
+                <p>{{establishment.city}}, TX{% if establishment.zip_code %} {{establishment.zip_code}}{% endif %}</p>
+                {% if establishment.latest_inspection_date %}<p>Last inspected: {{establishment.latest_inspection_date|date:"N j, Y"}}</p>{% endif %}
             </div>
 
             <div id="dropdown">
                 <p>Choose an inspection:</p>
                 <select id="inspectionselect">
-                    <option value="0">6/9/2017</option>
-                    <option value="1">4/20/2016</option>
+                    {% for inspection in establishment.inspection_set.all %}
+                    <option value="{{inspection.date|date:"Y-m-d"}}">{{inspection.date|date:"N j, Y"}}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div id="inspectiondetails">
-                <h3>Inspection date: 12/22/1995</h3>
+                {% for inspection in establishment.inspection_set.all %}
+                <div class="inspection" date="{{inspection.date|date:"Y-m-d"}}">
 
-                <p>Score: C (79/100)</p>
-                <p>Area:
-                    <select id="areas">
-                        <option value="area1">Restaurant</option>
-                        <option value="area2">Gas Station</option>
-                    </select>
-                </p>
+                  <h3>Inspection date: {{inspection.date|date:"N j, Y"}}</h3>
 
-                <h4>Violations</h4>
+                  <p>Score: {{inspection.normalized_letter_grade}} {% if inspection.normalized_numeric_grade %}({{inspection.normalized_numeric_grade}}/100){% else %}(no numeric score){% endif %}</p>
 
-                <table id ="violations">
-                    <tr>
-                        <th align="left">Points</th>
-                        <th align="left">Name</th>
-                        <th align="left">Details</th>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>smelly soap but not in the good way :(</td>
-                        <td>buy better smelling soap</td>
-                    </tr>
-                </table>
+                  {% if inspection.area %}<p>Area: {{inspection.area}}</p>{% endif %}
+                  {% if inspection.inspection_type %}<p>Type: {{inspection.inspection_type}}</p>{% endif %}
+
+                  {% if inspection.displayed_violations %}
+                  <h4>Violations</h4>
+
+                  <table id ="violations">
+                      <tr>
+                          <th align="left">Points</th>
+                          <th align="left">Name</th>
+                          <th align="left">Details</th>
+                      </tr>
+                      {% for violation in inspection.violation_set.all %}
+                      <tr>
+                          <td>{% if violation.points_deducted %}{{violation.points_deducted}} {% else %}N/A{% endif %}</td>
+                          <td>{{violation.infraction_category}}</td>
+                          <td>{{violation.inspector_comment}}</td>
+                      </tr>
+                      {% endfor %}
+                  </table>
+                  {% else %}<h4>No violations recorded.</h4>{% endif %}
+                </div>
+              {% endfor %}
             </div>
         </div>
     </body>
