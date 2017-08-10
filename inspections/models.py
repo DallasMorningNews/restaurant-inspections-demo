@@ -36,7 +36,7 @@ class Establishment(models.Model):
     @property
     def latest_inspection_date(self):
         if self.inspection_set.count() > 0:
-            return self.inspection_set.latest().date.strftime(self.date, '%Y-%m-%d')
+            return self.inspection_set.latest().date
         return None
 
 
@@ -71,7 +71,7 @@ class Inspection(models.Model):
         choices=INSPECTING_AGENCY_CHOICES,
         max_length=25
     )
-    normalized_numeric_grade = models.IntegerField()
+    normalized_numeric_grade = models.IntegerField(blank=True, null=True)
     normalized_letter_grade = models.CharField(
         choices=LETTER_GRADE_CHOICES,
         max_length=1
