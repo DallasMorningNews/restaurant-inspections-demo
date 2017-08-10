@@ -120,7 +120,7 @@ class CarrolltonScraper(SequentialEnhancementScraper):
 
         return {
             'establishment_name': clean_name,
-            'street_address': clean_address,
+            'address': clean_address,
             'city': 'Carrollton',
             # 'inspection_date': clean_date.strip(),
             # 'inspection_score': clean_score.strip(),
@@ -137,7 +137,7 @@ class CarrolltonScraper(SequentialEnhancementScraper):
 
         formatted_establishment = {
             'establishment_name': establishment_name,
-            'street_address': establishment_object['street_address'],
+            'address': establishment_object['address'],
             'city': establishment_object['city'],
         }
 
@@ -148,12 +148,12 @@ class CarrolltonScraper(SequentialEnhancementScraper):
 
         formatted_establishment['inspections'] = [
             _ for _ in all_inspections
-            if _['date'] is not None and _['score'] is not None
+            if _['date'] is not None and _['raw_score'] is not None
         ]
 
         elided_inspections = [
             _ for _ in all_inspections
-            if _['date'] is None or _['score'] is None
+            if _['date'] is None or _['raw_score'] is None
         ]
 
         if len(elided_inspections) > 0:
@@ -335,13 +335,13 @@ class CarrolltonScraper(SequentialEnhancementScraper):
 
         return {
             'date': inspection_date,
-            'score': inspection_score,
+            'raw_score': inspection_score,
             'violations': violation_list,
         }
 
     def get_formatted_inspection(self, raw_inspection):
         raw_date = raw_inspection['date']
-        raw_score = raw_inspection['score']
+        raw_score = raw_inspection['raw_score']
 
         inspected_date = None
         inspected_date_fmt = None
@@ -356,7 +356,7 @@ class CarrolltonScraper(SequentialEnhancementScraper):
 
         formatted_inspection = {
             'date': inspected_date_fmt,
-            'score': inspection_score,
+            'raw_score': inspection_score,
             'violations': [
                 self.get_formatted_violation(_)
                 for _ in raw_inspection['violations']

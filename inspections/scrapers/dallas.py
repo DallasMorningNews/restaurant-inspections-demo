@@ -73,7 +73,7 @@ class DallasScraper(BulkDataScraper):
             'establishment_name': raw_establishment.get('program_identifier'),
             'address': raw_establishment.get('site_address', ''),
             'city': 'Dallas',
-            'zip': raw_establishment.get('zip'),
+            'zip_code': raw_establishment.get('zip'),
         }
 
         inspection_list = []
@@ -156,9 +156,9 @@ class DallasScraper(BulkDataScraper):
                 #     )
 
                 violations.append({
-                    'points_deducted': raw_establishment.get(
+                    'points_deducted': int(raw_establishment.get(
                         src_fields['points_deducted']
-                    ),
+                    )),
                     'inspector_comment': raw_establishment.get(
                         src_fields['inspector_comment']
                     ),

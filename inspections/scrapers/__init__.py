@@ -10,11 +10,10 @@ class Scraper(object):
     '''TK.
 
     '''
-    urls = {}
-
     def __init__(self, locale=None, mode=None):
         self.locale = locale
         self.mode = mode
+        self.urls = {}
 
     def get_raw_establishment_list(self, establishment_id):
         raise NotImplementedError
@@ -74,8 +73,10 @@ class SequentialEnhancementScraper(Scraper):
     '''TK.
 
     '''
-    def __init__(self, locale, mode):
-        mode = 'sequential-enhancement'
+    def __init__(self, locale, mode=None):
+        if mode is None:
+            mode = 'sequential-enhancement'
+
         Scraper.__init__(self, locale, mode)
 
     def get_raw_establishment(self, establishment_id):
