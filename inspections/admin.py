@@ -26,3 +26,18 @@ class EstablishmentAdmin(nested_admin.NestedModelAdmin):
     inlines = [
         InspectionInline,
     ]
+    list_display = [
+        'establishment_name',
+        'city',
+        'zip_code',
+        'latest_inspection_date',
+        'latest_inspection_letter_grade',
+        'latest_inspection_numeric_grade',
+    ]
+    list_filter = [
+        'city',
+        'zip_code',
+        # 'latest_inspection_letter_grade',
+        # 'latest_inspection_numeric_grade',
+    ]
+    search_fields = ['establishment_name', 'source_id', 'address']

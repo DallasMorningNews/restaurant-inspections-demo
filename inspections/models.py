@@ -27,29 +27,35 @@ class Establishment(models.Model):
     city = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} ({1}, TX)'.format(
             self.establishment_name,
             self.city
         )
 
-    @property
     def latest_inspection_date(self):
         if self.inspection_set.count() > 0:
             return self.inspection_set.latest().date
         return None
+    latest_inspection_date.short_description = "Latest inspection"
 
-    @property
+    latest_inspection_date = property(latest_inspection_date)
+
     def latest_inspection_letter_grade(self):
         if self.inspection_set.count() > 0:
             return self.inspection_set.latest().normalized_letter_grade
         return "?"
+    latest_inspection_letter_grade.short_description = "Latest grade"
 
-    @property
+    latest_inspection_letter_grade = property(latest_inspection_letter_grade)
+
     def latest_inspection_numeric_grade(self):
         if self.inspection_set.count() > 0:
             return self.inspection_set.latest().normalized_numeric_grade
         return "--"
+    latest_inspection_numeric_grade.short_description = "Latest score"
+
+    latest_inspection_numeric_grade = property(latest_inspection_numeric_grade)
 
 
 class Inspection(models.Model):
@@ -93,17 +99,17 @@ class Inspection(models.Model):
         get_latest_by = "date"
         ordering = ['-date']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.area:
             return '{0} [{1}] on {2} ({3} grade)'.format(
-                self.restaurant,
+                self.establishment,
                 self.area,
                 datetime.strftime(self.date, '%Y-%m-%d'),
                 self.normalized_letter_grade
             )
 
         return '{0} on {1} ({2} grade)'.format(
-            self.restaurant,
+            self.establishment,
             datetime.strftime(self.date, '%Y-%m-%d'),
             self.normalized_letter_grade
         )
@@ -139,7 +145,10 @@ class Violation(models.Model):
     additional_information = models.TextField(blank=True, null=True)
     violation_count = models.IntegerField(blank=True, null=True)
 
-    def __unicode__(self):
+    class Meta:
+        ordering = ['-points_deducted', 'infraction_category']
+
+    def __str__(self):
         return 'Violation: "{0}" [{1} points deducted]'.format(
             self.infraction_category,
             self.points_deducted
