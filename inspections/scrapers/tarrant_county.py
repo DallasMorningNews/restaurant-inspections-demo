@@ -13,7 +13,7 @@ END_STR = 'rejected'
 
 EVENT_TARGETS = {
     'list_page': 'ctl00$ContentPH1$GridView1',
-    'inspection_tag_change': 'ctl00$ContentPH1$DropDownList1',
+    'inspection_area_change': 'ctl00$ContentPH1$DropDownList1',
     'report_retrieval': 'ctl00$ContentPH1$GridView1',
 }
 
@@ -104,7 +104,7 @@ class TarrantCountyScraper(CookieBasedScraper):
 
         restaurant_markup = self.open_url('detail')
 
-        inspection_tags = [
+        inspection_areas = [
             {'raw_text': _.text, 'value': _['value']}
             for _
             in restaurant_markup.find(
@@ -114,14 +114,14 @@ class TarrantCountyScraper(CookieBasedScraper):
         ]
 
         # return [
-        #     self.get_raw_inspections_for_tag(self.get_url('detail'), _)
-        #     for _ in inspection_tags
+        #     self.get_raw_inspections_for_area(self.get_url('detail'), _)
+        #     for _ in inspection_areas
         # ]
 
         all_inspections_for_place = []
-        for _ in inspection_tags:
+        for _ in inspection_areas:
             all_inspections_for_place.extend(
-                self.get_raw_inspections_for_tag(self.get_url('detail'), _)
+                self.get_raw_inspections_for_area(self.get_url('detail'), _)
             )
 
         return all_inspections_for_place
@@ -137,45 +137,45 @@ class TarrantCountyScraper(CookieBasedScraper):
             )
 
         return {
-            'name': establishment_object['name'],
+            'establishment_name': establishment_object['establishment_name'],
             'address': establishment_object['address'],
             'city': establishment_object['city'],
-            'zip': establishment_object['zip'],
+            'zip_code': establishment_object['zip_code'],
             'inspections': formatted_inspections
         }
 
-    def get_raw_inspections_for_tag(self, detail_url, tag):
+    def get_raw_inspections_for_area(self, detail_url, area):
         '''TK.
 
         '''
         self.set_url('detail', detail_url)
         current_markup = self.open_url('detail')
 
-        tag_change_form = self.browser.select_form('#aspnetForm')
+        area_change_form = self.browser.select_form('#aspnetForm')
 
-        changer_payload = self.get_tag_page_payload(current_markup)
+        changer_payload = self.get_area_page_payload(current_markup)
 
         changer_payload['__EVENTARGUMENT'] = ''
 
-        changer_payload['ctl00$ContentPH1$DropDownList1'] = tag['value']
+        changer_payload['ctl00$ContentPH1$DropDownList1'] = area['value']
 
         for k, v in changer_payload.items():
-            tag_change_form.set(k, v)
+            area_change_form.set(k, v)
 
         self.browser.submit_selected()
 
-        raw_inspections_for_tag = []
+        raw_inspections_for_area = []
 
-        inspection_table_for_tag = self.browser.get_current_page().find(
+        inspection_table_for_area = self.browser.get_current_page().find(
             id='ctl00_ContentPH1_GridView1'
         )
 
         records = []
-        if inspection_table_for_tag is not None:
-            raw_inspections_for_tag = inspection_table_for_tag.find_all('tr')
+        if inspection_table_for_area is not None:
+            raw_inspections_for_area = inspection_table_for_area.find_all('tr')
 
-        if len(raw_inspections_for_tag) > 0:
-            for _ in raw_inspections_for_tag[1:]:
+        if len(raw_inspections_for_area) > 0:
+            for _ in raw_inspections_for_area[1:]:
                 tds = _.find_all('td')
 
                 records.append({
@@ -183,12 +183,12 @@ class TarrantCountyScraper(CookieBasedScraper):
                         tds[0].text,
                         '%m/%d/%Y'
                     ).strftime('%Y-%m-%d'),
-                    'type': tds[1].text,
-                    'demerits': tds[2].text,
+                    'inspection_type': tds[1].text,
+                    'raw_score': tds[2].text,
                     'detail_postback': tds[3].find('a')['href'],
-                    'tag': tag['raw_text'],
-                    'dropdown_choice': tag['value'],
-                    'order_in_tag': 0,
+                    'area': area['raw_text'],
+                    'dropdown_choice': area['value'],
+                    'order_in_area': 0,
                 })
 
         return records
@@ -227,33 +227,48 @@ class TarrantCountyScraper(CookieBasedScraper):
         if violation_grid is not None:
             violations_raw = violation_grid.find_all('tr')[1:]
 
+        raw_score = None
+        try:
+            raw_score = int(inspection_meta['raw_score'])
+        except Exception:
+            print('Could not convert score to int: {}'.format(
+                inspection_meta['raw_score']
+            ))
+
         return {
             'violations': [
                 self.get_formatted_violation(_) for _ in violations_raw
             ],
             'date': inspection_meta['date'],
-            'demerits': inspection_meta['demerits'],
-            'tag': inspection_meta['tag'],
-            'type': inspection_meta['type']
+            'raw_score': raw_score,
+            'area': inspection_meta['area'],
+            'inspection_type': inspection_meta['inspection_type']
             # 'meta': inspection_meta,
         }
 
     def get_formatted_violation(self, violation_el):
         row_cells = violation_el.find_all('td')
 
-        violation_name = row_cells[0].text
+        infraction_category = row_cells[0].text
         violation_count = row_cells[1].text
-        violation_description = row_cells[2].text
-        violation_points = row_cells[3].text
+        inspector_comment = row_cells[2].text
+
+        points_deducted = None
+        try:
+            points_deducted = int(row_cells[3].text)
+        except Exception:
+            print('Could not convert score to int: {}'.format(
+                row_cells[3].text
+            ))
 
         return {
-            'violation_name': violation_name,
+            'infraction_category': infraction_category,
             'violation_count': violation_count,
-            'violation_description': violation_description.replace(
+            'inspector_comment': inspector_comment.replace(
                 u'\xa0',
                 u''
             ),
-            'violation_points': violation_points
+            'points_deducted': points_deducted,
         }
 
     def load_list_page(self, new_page):
@@ -314,7 +329,7 @@ class TarrantCountyScraper(CookieBasedScraper):
 
         return payload
 
-    def get_tag_page_payload(self, markup):
+    def get_area_page_payload(self, markup):
         '''TK.
 
         '''
@@ -328,7 +343,7 @@ class TarrantCountyScraper(CookieBasedScraper):
 
         payload = self.retrieve_form_payload(markup, payload_id_fields)
 
-        payload['__EVENTTARGET'] = EVENT_TARGETS['inspection_tag_change']
+        payload['__EVENTTARGET'] = EVENT_TARGETS['inspection_area_change']
 
         return payload
 
@@ -368,10 +383,10 @@ class TarrantCountyScraper(CookieBasedScraper):
             restaurant_zip = row_cells[3].text
             map_link = row_cells[4].find_all('a')[0]['href']
             rows_formatted.append({
-                'name': restaurant_name,
+                'establishment_name': restaurant_name,
                 'address': restaurant_address,
                 'city': restaurant_city,
-                'zip': restaurant_zip,
+                'zip_code': restaurant_zip,
                 'detail_link': detail_link,
                 'map_link': map_link
             })
