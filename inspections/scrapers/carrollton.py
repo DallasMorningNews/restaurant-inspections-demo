@@ -19,7 +19,7 @@ class CarrolltonScraper(SequentialEnhancementScraper):
     '''
     def __init__(self):
         locale = 'City of Carrollton'
-        score_type = 'TK'
+        score_type = 'points'
 
         SequentialEnhancementScraper.__init__(
             self,
@@ -374,18 +374,18 @@ class CarrolltonScraper(SequentialEnhancementScraper):
         if len(raw_violation) == 1:
             return {
                 'points_deducted': 0,
-                'rule_violated': '',
-                'corrective_action': '',
-                'corrected_during_inspection': '',
-                'extra_information': raw_violation[0],
+                'infraction_category': '',
+                'inspector_comment': '',
+                'corrected_during_inspection': None,
+                'additional_information': raw_violation[0],
             }
 
         was_corrected_during_inspection = (raw_violation[3].lower() == 'no')
 
         return {
             'points_deducted': int(raw_violation[0]),
-            'rule_violated': raw_violation[1],
-            'corrective_action': raw_violation[2],
+            'infraction_category': raw_violation[1],
+            'inspector_comment': raw_violation[2],
             'corrected_during_inspection': was_corrected_during_inspection,
-            'extra_information': None,
+            'additional_information': '',
         }
