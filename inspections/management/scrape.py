@@ -2,7 +2,7 @@
 from inspections.data_loader import save_establishment
 
 
-def scrape_source(locale):
+def scrape_source(locale, verbose=False):
     if locale == 'carrollton':
         from inspections.scrapers.carrollton import CarrolltonScraper
         scraper = CarrolltonScraper()
@@ -15,16 +15,27 @@ def scrape_source(locale):
     elif locale == 'plano':
         from inspections.scrapers.plano import PlanoScraper
         scraper = PlanoScraper()
+    elif locale == '':
+        from inspections.scrapers.tarrant_county import TarrantCountyScraper
+        scraper = TarrantCountyScraper()
     else:
         print('Please specify a locale.')
         return None
 
-    establishment_list = scraper.get_formatted_establishment_list(verbose=True)
+    establishment_list = scraper.get_formatted_establishment_list(
+        verbose=verbose
+    )
 
     normalized_list = scraper.normalize_establishment_list(establishment_list)
 
+    records_count = 1
     for i, _ in enumerate(normalized_list):
-        print(i)
+        if verbose is True:
+            print(i)
         save_establishment(_)
+        records_count = i
 
-    print('Done.')
+    print('Scraped {} records from {}'.format(
+        records_count,
+        scraper.locale
+    ))
