@@ -4,6 +4,7 @@ from datetime import datetime
 
 # Imports from Django.
 from django.db import models
+from django.urls import reverse
 
 
 INSPECTING_AGENCY_CHOICES = (
@@ -32,6 +33,9 @@ class Establishment(models.Model):
             self.establishment_name,
             self.city
         )
+
+    def get_absolute_url(self):
+        return reverse('restaurant-detail', args=[str(self.id)])
 
     def latest_inspection_date(self):
         if self.inspection_set.count() > 0:

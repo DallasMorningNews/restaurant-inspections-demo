@@ -72,7 +72,7 @@
                 {% if establishment.latest_inspection_date %}<p>Last inspected: {{establishment.latest_inspection_date|date:"N j, Y"}}</p>{% endif %}
             </div>
 
-            <p><a href="#">Click here to see inspection details.</a></p>
+            <p><a href="{{ establishment.get_absolute_url }}">Click here to see inspection details.</a></p>
         </div>
     </body>
 </html>
