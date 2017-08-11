@@ -24,7 +24,7 @@ class TarrantCountyScraper(CookieBasedScraper):
     '''
     def __init__(self):
         locale = 'Tarrant County'
-        score_type = 'TK'
+        score_type = 'demerits'
 
         CookieBasedScraper.__init__(
             self,
