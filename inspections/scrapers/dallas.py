@@ -53,7 +53,7 @@ class DallasScraper(BulkDataScraper):
         )
         return []
 
-    def get_formatted_establishment_list(self):
+    def get_formatted_establishment_list(self, verbose=True, batch_size=20):
         '''TK.
 
         '''
