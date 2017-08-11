@@ -71,7 +71,7 @@ class Scraper(object):
         normalized_inspection['normalized_numeric_grade'] = number_grade
 
         if self.score_type == 'letter_grade':
-            letter_grade = self.raw_score
+            letter_grade = inspection['raw_score']
         else:
             letter_grade = self.get_normalized_letter_grade(number_grade)
 
