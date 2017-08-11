@@ -1,4 +1,5 @@
 # Imports from python.  # NOQA
+from copy import deepcopy
 
 
 # Imports from other dependencies.
@@ -10,9 +11,10 @@ class Scraper(object):
     '''TK.
 
     '''
-    def __init__(self, locale=None, mode=None):
+    def __init__(self, locale=None, mode=None, score_type=None):
         self.locale = locale
         self.mode = mode
+        self.score_type = score_type
         self.urls = {}
 
     def get_raw_establishment_list(self, establishment_id):
@@ -36,7 +38,53 @@ class Scraper(object):
         elif http_method.upper() == 'POST':
             return requests.post(self.get_url(url_key), **kwargs)
 
-    def letterify_scores(self, raw_score):
+    def normalize_establishment_list(self, establishment_list):
+        return [
+            self.normalize_establishment(_) for _ in establishment_list
+        ]
+
+    def normalize_establishment(self, establishment):
+        normalized_establishment = deepcopy(establishment)
+
+        formatted_inspections = normalized_establishment.pop('inspections')
+
+        normalized_establishment['inspections'] = [
+            self.normalize_inspection(_) for _ in formatted_inspections
+        ]
+
+        return normalized_establishment
+
+    def normalize_inspection(self, inspection):
+        normalized_inspection = deepcopy(inspection)
+
+        formatted_violations = normalized_inspection.pop('violations')
+
+        normalized_inspection['violations'] = [
+            self.normalize_violation(_) for _ in formatted_violations
+        ]
+
+        normalized_inspection['source_agency'] = self.locale
+
+        number_grade = self.get_normalized_number_grade(
+            inspection['raw_score']
+        )
+        normalized_inspection['normalized_numeric_grade'] = number_grade
+
+        if self.score_type == 'letter_grade':
+            letter_grade = self.raw_score
+        else:
+            letter_grade = self.get_normalized_letter_grade(number_grade)
+
+        normalized_inspection['normalized_letter_grade'] = letter_grade
+
+        return normalized_inspection
+
+    def normalize_violation(self, violation):
+        normalized_violation = deepcopy(violation)
+
+        return normalized_violation
+
+    def get_normalized_letter_grade(self, raw_score):
         if raw_score >= 90:
             return 'A'
         elif raw_score >= 80:
@@ -48,22 +96,29 @@ class Scraper(object):
 
         return 'F'
 
-    def get_normalized_score(self, score):
+    def get_normalized_number_grade(self, score):
         if self.score_type == 'demerits':
-            return self.letterify_scores(100 - score)
-        elif self.score_type == 'numeric':
-            return self.letterify_scores(score)
-        elif self.score_type == 'letter_grade':
+            return 100 - score
+        elif self.score_type == 'points':
             return score
+        elif self.score_type == 'letter_grade':
+            return None
+
+        raise NotImplementedError
 
 
 class BulkDataScraper(Scraper):
     '''TK.
 
     '''
-    def __init__(self, locale):
+    def __init__(self, locale=None, score_type=None, mode=None):
         mode = 'bulk-data'
-        Scraper.__init__(self, locale, mode)
+        Scraper.__init__(
+            self,
+            locale=locale,
+            mode=mode,
+            score_type=score_type
+        )
 
     def get_formatted_establishment(self):
         raise NotImplementedError
@@ -73,11 +128,16 @@ class SequentialEnhancementScraper(Scraper):
     '''TK.
 
     '''
-    def __init__(self, locale, mode=None):
+    def __init__(self, locale=None, score_type=None, mode=None):
         if mode is None:
             mode = 'sequential-enhancement'
 
-        Scraper.__init__(self, locale, mode)
+        Scraper.__init__(
+            self,
+            locale=locale,
+            mode=mode,
+            score_type=score_type
+        )
 
     def get_raw_establishment(self, establishment_id):
         raise NotImplementedError
@@ -90,9 +150,14 @@ class CookieBasedScraper(SequentialEnhancementScraper):
     '''TK.
 
     '''
-    def __init__(self, locale):
+    def __init__(self, locale=None, score_type=None, mode=None):
         mode = 'cookie-based'
-        SequentialEnhancementScraper.__init__(self, locale, mode)
+        SequentialEnhancementScraper.__init__(
+            self,
+            locale=locale,
+            mode=mode,
+            score_type=score_type
+        )
 
         self.browser = StatefulBrowser(
             soup_config={'features': 'html.parser'}

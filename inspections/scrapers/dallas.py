@@ -13,10 +13,15 @@ class DallasScraper(BulkDataScraper):
     '''TK.
 
     '''
-    score_type = 'TK'
-
     def __init__(self):
-        BulkDataScraper.__init__(self, 'City of Dallas')
+        locale = 'City of Dallas'
+        score_type = 'points'
+
+        BulkDataScraper.__init__(
+            self,
+            locale=locale,
+            score_type=score_type
+        )
 
         results_limit_qs = '$limit={}'.format(MAX_RESULTS_NUM)
 
@@ -160,13 +165,16 @@ class DallasScraper(BulkDataScraper):
                         src_fields['points_deducted']
                     )),
                     'inspector_comment': raw_establishment.get(
-                        src_fields['inspector_comment']
+                        src_fields['inspector_comment'],
+                        ''
                     ),
                     'statute_citation': raw_establishment.get(
-                        src_fields['statute_citation']
+                        src_fields['statute_citation'],
+                        ''
                     ),
                     'infraction_category': raw_establishment.get(
-                        src_fields['infraction_category']
+                        src_fields['infraction_category'],
+                        ''
                     ),
                 })
 
