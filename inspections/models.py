@@ -21,7 +21,7 @@ class Establishment(models.Model):
 
     There will be one Establishment instance for each establishment.
     '''
-    establishment_name = models.CharField(max_length=50)
+    establishment_name = models.CharField(max_length=200)
     source_id = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=50)
