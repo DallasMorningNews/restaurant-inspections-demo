@@ -149,7 +149,7 @@ class Violation(models.Model):
         ordering = ['-points_deducted', 'infraction_category']
 
     def __str__(self):
-        return 'Violation: "{0}" [{1} points deducted]'.format(
+        return '"{0}" [{1} points deducted]'.format(
             self.infraction_category,
             self.points_deducted
         )
