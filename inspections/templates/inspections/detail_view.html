@@ -59,6 +59,10 @@
                 float: left;
                 clear: both;
             }
+            .no-show {
+              display: none;
+            }
+
             h3 {
                 margin-bottom: 0;
             }
@@ -125,6 +129,17 @@
                 color: #0185d3;
             }
         </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+          $('#inspectionselect').change(function() {
+            var selectdate = $(this).val();
+
+            $('.inspection').addClass('no-show');
+            $("#" + selectdate).removeClass('no-show');
+          })
+        });
+        </script>
     </head>
 
     <body>
@@ -152,15 +167,15 @@
                 <p>Choose an inspection:</p>
                 <select id="inspectionselect">
                     {% for inspection in establishment.inspection_set.all %}
-                    <option value="{{inspection.date|date:"Y-m-d"}}">{{inspection.date|date:"N j, Y"}}</option>
+                    <option value="{{inspection.date|date:"Y-m-d"}}" >{{inspection.date|date:"N j, Y"}}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div id="inspectiondetails">
                 {% for inspection in establishment.inspection_set.all %}
-                <div class="inspection" date="{{inspection.date|date:"Y-m-d"}}">
 
+                <div class="inspection {% if not forloop.first %}no-show{% endif %}" id="{{inspection.date|date:"Y-m-d"}}">
                   <h3>Inspection date: {{inspection.date|date:"N j, Y"}}</h3>
 
                   <p>Score: {{inspection.normalized_letter_grade}} {% if inspection.normalized_numeric_grade %}({{inspection.normalized_numeric_grade}}/100){% else %}(no numeric score){% endif %}</p>
