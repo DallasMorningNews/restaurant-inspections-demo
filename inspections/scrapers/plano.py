@@ -16,10 +16,15 @@ class PlanoScraper(SequentialEnhancementScraper):
     '''TK.
 
     '''
-    score_type = 'TK'
-
     def __init__(self):
-        SequentialEnhancementScraper.__init__(self, 'City of Plano')
+        locale = 'City of Plano'
+        score_type = 'TK'
+
+        SequentialEnhancementScraper.__init__(
+            self,
+            locale=locale,
+            score_type=score_type
+        )
 
         self.set_url(
             'list',

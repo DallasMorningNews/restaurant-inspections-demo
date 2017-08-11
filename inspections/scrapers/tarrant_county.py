@@ -22,10 +22,15 @@ class TarrantCountyScraper(CookieBasedScraper):
     '''TK.
 
     '''
-    score_type = 'TK'
-
     def __init__(self):
-        CookieBasedScraper.__init__(self, 'Tarrant County')
+        locale = 'Tarrant County'
+        score_type = 'TK'
+
+        CookieBasedScraper.__init__(
+            self,
+            locale=locale,
+            score_type=score_type
+        )
 
         self.set_url('base', BASE_URL)
 

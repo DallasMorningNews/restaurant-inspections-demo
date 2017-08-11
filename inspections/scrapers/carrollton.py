@@ -17,10 +17,15 @@ class CarrolltonScraper(SequentialEnhancementScraper):
     '''TK.
 
     '''
-    score_type = 'TK'
-
     def __init__(self):
-        SequentialEnhancementScraper.__init__(self, 'City of Carrollton')
+        locale = 'City of Carrollton'
+        score_type = 'TK'
+
+        SequentialEnhancementScraper.__init__(
+            self,
+            locale=locale,
+            score_type=score_type
+        )
 
         self.set_url(
             'feed',

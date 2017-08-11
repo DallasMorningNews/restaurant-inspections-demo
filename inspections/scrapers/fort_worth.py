@@ -24,10 +24,15 @@ class FortWorthScraper(CookieBasedScraper):
     '''TK.
 
     '''
-    score_type = 'TK'
-
     def __init__(self):
-        CookieBasedScraper.__init__(self, 'Tarrant County')
+        locale = 'City of Fort Worth'
+        score_type = 'demerits'
+
+        CookieBasedScraper.__init__(
+            self,
+            locale=locale,
+            score_type=score_type
+        )
 
         self.set_url('base', BASE_URL)
 
@@ -103,7 +108,8 @@ class FortWorthScraper(CookieBasedScraper):
         formatted_data = []
 
         for i, _ in enumerate(data):
-            formatted_data.append(self.get_formatted_establishment(_))
+            if i < 20:
+                formatted_data.append(self.get_formatted_establishment(_))
 
             if verbose is True:
                 if (i % batch_size) == 0:
