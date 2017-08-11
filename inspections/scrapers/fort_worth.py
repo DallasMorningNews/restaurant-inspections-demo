@@ -108,8 +108,7 @@ class FortWorthScraper(CookieBasedScraper):
         formatted_data = []
 
         for i, _ in enumerate(data):
-            if i < 20:
-                formatted_data.append(self.get_formatted_establishment(_))
+            formatted_data.append(self.get_formatted_establishment(_))
 
             if verbose is True:
                 if (i % batch_size) == 0:
@@ -165,30 +164,32 @@ class FortWorthScraper(CookieBasedScraper):
             area_cells = area.find_all('td', recursive=False)
 
             area_name = area_cells[1].text.strip()
-            area_listed_inspections = area_cells[2].find('table').find_all(
-                'tr',
-                recursive=False
-            )[1:]
+            area_inspection_table = area_cells[2].find('table')
+            if area_inspection_table is not None:
+                area_listed_inspections = area_inspection_table.find_all(
+                    'tr',
+                    recursive=False
+                )[1:]
 
-            for raw_inspection in area_listed_inspections:
-                inspection_cells = raw_inspection.find_all('td')
+                for raw_inspection in area_listed_inspections:
+                    inspection_cells = raw_inspection.find_all('td')
 
-                icon_text = inspection_cells[0].text.strip()
+                    icon_text = inspection_cells[0].text.strip()
 
-                detail_link = None
-                if icon_text != 'N/A':
-                    detail_link = inspection_cells[0].find('a')['href']
+                    detail_link = None
+                    if icon_text != 'N/A':
+                        detail_link = inspection_cells[0].find('a')['href']
 
-                inspection = {
-                    'area': area_name,
-                    'detail_link': detail_link,
-                    'date': inspection_cells[1].text.strip(),
-                    'inspection_type': inspection_cells[2].text.strip(),
-                    'demerits': inspection_cells[3].text.strip(),
-                }
+                    inspection = {
+                        'area': area_name,
+                        'detail_link': detail_link,
+                        'date': inspection_cells[1].text.strip(),
+                        'inspection_type': inspection_cells[2].text.strip(),
+                        'demerits': inspection_cells[3].text.strip(),
+                    }
 
-                this_area_inspections.append(inspection)
-            all_areas_inspections.extend(this_area_inspections)
+                    this_area_inspections.append(inspection)
+                all_areas_inspections.extend(this_area_inspections)
 
         return all_areas_inspections
 
