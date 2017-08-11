@@ -18,7 +18,7 @@ class PlanoScraper(SequentialEnhancementScraper):
     '''
     def __init__(self):
         locale = 'City of Plano'
-        score_type = 'TK'
+        score_type = 'letter_grade'
 
         SequentialEnhancementScraper.__init__(
             self,
@@ -88,30 +88,6 @@ class PlanoScraper(SequentialEnhancementScraper):
                 print('.')
 
         return formatted_data
-
-        # # Get the raw list of establishments.
-        # data = self.get_raw_establishment_list()
-        #
-        # establishments = []
-        # for restaurant in data:
-        #     name = restaurant.get('name', '')
-        #     locationID = restaurant.get('locationId', '')
-        #
-        #     address_parts = restaurant.get('address', '').split(', Plano, TX')
-        #
-        #     formatted_establishment = {
-        #         'establishment_name': name,
-        #         'source_id': locationID,
-        #         'address': address_parts[0].strip(),
-        #         'city': 'Plano',
-        #     }
-        #
-        #     if len(address_parts) > 1:
-        #         formatted_establishment['zip_code'] = address_parts[1].strip()
-        #
-        #     establishments.append(formatted_establishment)
-        #
-        # return [self.get_formatted_establishment(_) for _ in establishments]
 
     def get_raw_establishment(self, establishment_obj):
         headers = {
