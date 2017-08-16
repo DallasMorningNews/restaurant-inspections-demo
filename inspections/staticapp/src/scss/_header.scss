@@ -1,0 +1,234 @@
+//
+// Top-level TDMN nav/page header
+// --------------------------------------------------
+
+.bg-black {
+    padding: 15px 0;
+    color: #ffffff;
+    background: $black51;
+    z-index: $zindex-navbar;
+    position: relative;
+}
+
+.logo {
+    background-image: url('http://interactives.templates.statics.s3.amazonaws.com/v1.0/images/_dmn_logo.svg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: left center;
+    opacity: 0.85;
+    display: block;
+    height: 40px;
+    width: 154.4px;
+    float: left;
+    cursor: pointer;
+    @include transition(all, .25s, ease-out);
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+#header-nav {
+    float: left;
+    margin-left: 20px;
+
+    > * {
+      margin-right: 20px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+}
+
+a.header-btn,
+.header-btn {
+  position: relative;
+  top: 1px;
+  background-color: rgba(255,255,255,0);
+  color: white;
+  font-family: $font-family-sans;
+  border: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  line-height: 39px;
+  float: left;
+  padding: 0;
+  text-decoration: none;
+
+  &:after {
+      position: absolute;
+      content: "";
+      display: block;
+      width: 0;
+      background-color: white;
+      height: 5px;
+      bottom: 1px;
+      @include transition(all, .25s, ease-out);
+  }
+
+  &:hover {
+      cursor: pointer;
+
+      &:after {
+          width: 100%;
+      }
+  }
+
+  &:focus {
+      outline: none;
+  }
+}
+
+.header-group {
+    float: left;
+    position: relative;
+
+    ul {
+        position: absolute;
+        top: 100%;
+        background-color: white;
+        min-width: 200px;
+        font-family: $font-family-sans;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: none;
+        list-style-type: none;
+        padding: 0;
+
+        &.open-list {
+            display: block;
+        }
+
+        li {
+            color: $black51;
+            font-size: 1.4rem;
+            line-height: 1.8rem;
+            margin-bottom: 1.2rem;
+            padding-top: 6px;
+            margin: 0 20px 1.2rem;
+
+            &:first-of-type {
+                padding-top: 20px;
+            }
+
+            a {
+                text-decoration: none;
+                color: $black51;
+
+                &:hover {
+                    color: $dmnblue !important;
+                    cursor: pointer;
+                }
+
+                &:visited {
+                    color: $black51;
+                }
+            }
+        }
+    }
+
+    .header-btn {
+      padding-right: 20px;
+    }
+
+    button {
+        #acc-icon {
+            display: none;
+
+            img {
+                max-width: 18px;
+                position: relative;
+                top: -2px;
+            }
+        }
+
+        #acc-text {
+            display: block;
+        }
+
+        &:before {
+            content: "";
+            position: absolute;
+            display: block;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid white;
+            right: 0;
+            top: 16px;
+            @include transition(all, .15s, ease-out);
+        }
+
+        &.open-button {
+            color: white;
+
+            &:before {
+                transform: rotate(-180deg);
+                border-top: 6px solid white;
+            }
+
+            &:after {
+                width: 100%;
+            }
+        }
+    }
+}
+@media (max-width: 500px) {
+    #header-nav {
+        width: calc(100% - 175px);
+    }
+
+    #header-account {
+        float: right;
+    }
+
+    .header-group {
+        margin-right: 10px;
+
+        ul {
+            left: auto;
+            right: 0;
+            min-width: 1px;
+        }
+
+        button {
+            padding: 0 30px 0 0;
+
+            #acc-icon {
+                display: block;
+            }
+
+            #acc-text {
+                display: none;
+            }
+        }
+    }
+
+    #account {
+        padding: 0;
+
+        &:before {
+            display: none;
+        }
+    }
+
+    #header-account {
+        ul {
+            left: auto;
+            right: 0;
+        }
+    }
+}

@@ -173,3 +173,4 @@ $RECYCLE.BIN/
 
 temp/*.json
 core/staticfiles/*
+inspections/staticapp/node_modules/*

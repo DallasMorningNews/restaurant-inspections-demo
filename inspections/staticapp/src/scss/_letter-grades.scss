@@ -1,0 +1,83 @@
+.grade-holder {
+    font-size: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+
+    .grade-box {
+        background-color: #B3B3B3;
+        border: 3px solid #999999;
+        color: #FFFFFF;
+        font-size: 0;
+        height: 124px;
+        left: 0;
+        margin: 0;
+        top: 0;
+        text-align: center;
+        width: 124px;
+
+        @media screen and (max-width: 300px) {
+            width: 100%;
+        }
+
+        .latest-inspection-label {
+            font-size: 12px;
+            line-height: 22px;
+            margin: 2px 0 0;
+            text-transform: uppercase;
+        }
+
+        .grade {
+            font-size: 72px;
+            font-weight: bold;
+            line-height: 70px;
+            margin: 0;
+        }
+
+        .score {
+            font-size: 14px;
+            line-height: 24px;
+            margin: 0;
+        }
+    }
+
+    .grade-date {
+        color: #777777;
+        font-size: 10px;
+        line-height: 20px;
+        margin-bottom: 1px;
+        margin-top: 5px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+}
+
+.grade-a {
+    background-color: $grade-a-fill !important;  /* 202 99 83 */
+    border-color: darken($grade-a-fill, 15%) !important;
+    // border-color: #0175BA !important;  /* 202 99 73 */
+}
+
+.grade-b {
+    background-color: $grade-b-fill !important;  /* 131 68 73 */
+    border-color: darken($grade-b-fill, 15%) !important;
+    // border-color: #33A147 !important;  /* 131 68 63 */
+}
+
+.grade-c {
+    background-color: $grade-c-fill !important;  /* 50 49 79 */
+    border-color: darken($grade-c-fill, 15%) !important;
+    // border-color: #B09F5A !important;  /* 50 49 69 */
+}
+
+.grade-d {
+    background-color: $grade-d-fill !important;  /* 27 100 100 */
+    border-color: darken($grade-d-fill, 15%) !important;
+    // border-color: #E56700 !important;  /* 27 100 90 */
+}
+
+.grade-f {
+    background-color: $grade-f-fill !important;  /* 4 97 79 */
+    border-color: darken($grade-f-fill, 15%) !important;
+    // border-color: #B01105 !important;  /* 4 97 69 */
+}

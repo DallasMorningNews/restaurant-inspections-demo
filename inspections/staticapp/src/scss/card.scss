@@ -1,0 +1,29 @@
+@import 'variables';
+@import 'base-styles';
+
+@import 'letter-grades';
+
+#card {
+    font-family: $font-family-sans;
+    background-color: #ebebeb;
+    max-width: 500px;
+    padding: 10px; /*top right bottom left*/
+    font-size: 13px;
+
+    h3 {
+        font-size: 20px;
+        margin: 0 0 10px 0;
+    }
+
+    .details {
+        h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        p {
+            font-size: 13px;
+            margin: 0;
+        }
+    }
+}

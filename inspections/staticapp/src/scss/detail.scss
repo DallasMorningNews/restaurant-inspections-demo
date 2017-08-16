@@ -1,0 +1,498 @@
+@import 'variables';
+@import 'mixins';
+
+@import 'custom-bootstrap/bootstrap';
+@import 'base-styles';
+
+@import 'header';
+@import 'letter-grades';
+
+#restaurant-inspections-branding {
+    font-size: 0;
+    margin-bottom: 36px;
+    margin-top: 36px;
+
+    h4 {
+        display: block;
+        float: left;
+        font-family: 'Alfa Slab One', cursive;
+        font-size: 2rem;
+        font-weight: normal;
+        line-height: 2.4rem;
+        margin: 0;
+    }
+
+    .score-swatches {
+        display: block;
+        float: left;
+        margin-left: 3px;
+        margin-top: 0.65rem;
+
+        .score-swatch {
+            border-radius: 6px;
+            display: inline-block;
+            height: 12px;
+            margin-left: 5px;
+            width: 12px;
+        }
+    }
+}
+
+#inspection-detail {
+    background-color: #FFFFFF;
+    border-bottom: 0 none;
+    box-shadow: 2px 2px 5px rgba(51,51,51,0.25);
+    color: #333333;
+    font-family: $font-family-sans;
+    font-size: 20px;
+    margin-bottom: 35px;
+    padding: 4rem;
+    padding-bottom: 0;
+    position: relative;
+
+    &::before {
+        background-color: $background-color;
+        content: '';
+        display: block;
+        height: 40px;
+        left: -20px;
+        position: absolute;
+        top: -20px;
+        width: 40px;
+
+        -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+             -o-transform: rotate(45deg);
+                transform: rotate(45deg);
+    }
+
+    .top-line-information {
+        left: 0;
+        min-height: 150px;
+        position: relative;
+        top: 0;
+
+        .details {
+            left: 156px;
+            position: relative;
+            width: calc(100% - 156px);
+
+            h2 {
+                font-family: 'Alfa Slab One', cursive;
+                font-size: 4.236rem;
+                font-weight: normal;
+                letter-spacing: 1.5px;
+                line-height: 5.85rem;
+                margin: 0;
+            }
+
+            p {
+                font-size: 1.618rem;
+                line-height: 28px;
+                margin: 0;
+            }
+        }
+    }
+
+    .divider {
+        border-bottom: 3px solid $background-color;
+        margin-bottom: 2.4rem;
+        padding-bottom: 2.4rem;
+    }
+
+    .more-overall-information {
+        display: none;
+
+        h6 {
+            font-family: 'Alfa Slab One', cursive;
+            font-size: 2.618rem;
+        }
+    }
+
+    .all-inspections {
+        font-family: "Gotham A","Gotham B",Arial,sans-serif;
+        margin-bottom: 25px;
+
+        h6 {
+            font-family: 'Alfa Slab One', cursive;
+            font-size: 2.618rem;
+            line-height: 4.236rem;
+            margin: 0 0 1.618rem;
+        }
+
+        .ribbon {
+            // align-items: center;
+            // background: #FFFFFF;
+            // display: flex;
+            // flex-direction: row;
+            // flex-wrap: nowrap;
+            font-size: 0;
+            height: 80px;
+            // justify-content: flex-start;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+
+            &::before {
+                background: #5B5B5B;
+                bottom: 0;
+                content: '';
+                height: 80px;
+                left: 0;
+                position: absolute;
+                top: 0;
+                width: 1.7rem;
+                z-index: 34;
+            }
+
+            .ribbon-heading {
+                color: #FFFFFF;
+                cursor: default;
+                font-size: 1.4rem;
+                font-weight: normal;
+                height: 8rem;
+                left: 0;
+                line-height: 2.4rem;
+                margin-right: -1px;
+                opacity: 1;
+                padding: 1.6rem 1.8rem;
+                position: absolute;
+                text-align: left;
+                text-transform: uppercase;
+                top: 0;
+                width: 150px;
+                z-index: 33;
+
+                transition: padding 200ms, max-width 300ms, opacity 250ms ease-out 400ms, color 300ms 900ms;
+
+                &::before {
+                    background: #5B5B5B;
+                    border-right: 1px solid rgba(26,26,26,0.6);
+                    bottom: 0;
+                    box-shadow: 3px 0px 14px -1px rgba(0,0,0,0.7);
+                    content: '';
+                    display: block;
+                    left: 0;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    transition: background 150ms;
+                    z-index: -1;
+
+                    -webkit-transform: skew(-15deg);
+                       -moz-transform: skew(-15deg);
+                         -o-transform: skew(-15deg);
+                }
+            }
+
+            .item-list {
+                left: 140px;
+                overflow-x: scroll;
+                padding-left: 10px;
+                position: absolute;
+                transition: box-shadow 250ms;
+                top: 0;
+                width: calc(100% - 140px);
+
+                &.end-shadow {
+                    box-shadow: inset -12px 0 12px -9px #808080;
+                }
+
+                .ribbon-track {
+                    height: 80px;
+                    position: relative;
+                    white-space: nowrap;
+                    // width: 150%;
+                }
+            }
+
+            .ribbon-item {
+                color: #0f0f0f;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 0;
+                height: 8rem;
+                min-width: 90px;
+                opacity: 1;
+                padding: 0.75rem 2.4rem;
+                position: relative;
+                text-align: center;
+                transition: padding 200ms, max-width 300ms, min-width 300ms, opacity 250ms ease-out 400ms, background-color 250ms, border 250ms, color 250ms;
+
+                &::before {
+                    background: #f7f7f7;
+                    border-bottom: 1px solid rgba(51,51,51,0.25);
+                    border-right: 1px solid rgba(51,51,51,0.25);
+                    border-top: 1px solid rgba(51,51,51,0.25);
+                    bottom: 0;
+                    box-shadow: inset 7px 0px 6px -6px rgba(51,51,51,0.19);
+                    content: '';
+                    display: block;
+                    left: 0;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    transition: background 150ms;
+                    z-index: -1;
+
+                    -webkit-transform: skew(-15deg);
+                       -moz-transform: skew(-15deg);
+                         -o-transform: skew(-15deg);
+                }
+
+                &:hover::before {
+                    background-color: darken(#f7f7f7, 10%);
+                }
+
+                &.active {
+                    color: #FFFFFF;
+
+                    &::before {
+                        background-color: darken(#f7f7f7, 25%);
+                        border: 3px solid #FFFFFF;
+                    }
+                }
+
+                // A-range grades.
+                &.a-range-grade::before {
+                    background-color: lighten(desaturate($grade-a-fill, 60%), 50%);
+                }
+
+                &.a-range-grade:hover::before {
+                    background-color: lighten(desaturate($grade-a-fill, 60%), 40%);
+                }
+
+                &.a-range-grade.active::before {
+                    background-color: $grade-a-fill;
+                    border-color: darken($grade-a-fill, 15%);
+                }
+
+                // B-range grades.
+                &.b-range-grade::before {
+                    background-color: lighten(desaturate($grade-b-fill, 30%), 36%);
+                }
+
+                &.b-range-grade:hover::before {
+                    background-color: lighten(desaturate($grade-b-fill, 30%), 26%);
+                }
+
+                &.b-range-grade.active::before {
+                    background-color: $grade-b-fill;
+                    border-color: darken($grade-b-fill, 15%);
+                }
+
+                // C-range grades.
+                &.c-range-grade::before {
+                    background-color: lighten(saturate($grade-c-fill, 5%), 27%);
+                }
+
+                &.c-range-grade:hover::before {
+                    background-color: lighten(saturate($grade-c-fill, 5%), 17%);
+                }
+
+                &.c-range-grade.active::before {
+                    background-color: $grade-c-fill;
+                    border-color: darken($grade-c-fill, 15%);
+                }
+
+                // D-range grades.
+                &.d-range-grade::before {
+                    background-color: lighten(desaturate($grade-d-fill, 30%), 40%);
+                }
+
+                &.d-range-grade:hover::before {
+                    background-color: lighten(desaturate($grade-d-fill, 30%), 30%);
+                }
+
+                &.d-range-grade.active::before {
+                    background-color: $grade-d-fill;
+                    border-color: darken($grade-d-fill, 15%);
+                }
+
+                // F-range grades.
+                &.f-range-grade::before {
+                    background-color: lighten(desaturate($grade-f-fill, 50%), 45%);
+                }
+
+                &.f-range-grade:hover::before {
+                    background-color: lighten(desaturate($grade-f-fill, 50%), 35%);
+                }
+
+                &.f-range-grade.active::before {
+                    background-color: $grade-f-fill;
+                    border-color: darken($grade-f-fill, 15%);
+                }
+
+                span {
+                    display: block;
+                }
+
+                .inspection-label {
+                    font-size: 1rem;
+                    line-height: 1.6rem;
+                }
+
+                .grade {
+                  font-size: 2.7rem;
+                  font-weight: bold;
+                  line-height: 3.3rem;
+                }
+
+                .score {
+                    font-size: 1.1rem;
+                    line-height: 1.6rem;
+                }
+
+                &.disabled {
+                    min-width: 0;
+                    overflow: hidden;
+                    padding: 2.25rem 0;
+                    width: 0;
+
+                    span {
+                        opacity: 0;
+                        transition: opacity 100ms;
+                    }
+                }
+            }
+        }
+    }
+
+    .end-line {
+        border: 0 none;
+        height: 5px;
+        margin: 4rem -4rem 0;
+        width: calc(100% + 8rem);
+    }
+
+    #dropdown {
+        margin-top: 10px;
+
+        p {
+            display: inline;
+            margin-bottom: 0;
+        }
+
+        #inspectionselect {
+            font-family: $font-family-sans;
+            font-size: 15px;
+            width: 169px;
+        }
+    }
+
+    #per-inspection-detail-views {
+        .inspection {
+            display: none;
+
+            &.active {
+                display: block;
+            }
+        }
+
+        h3 {
+            margin-bottom: 0;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 2.1rem;
+            margin: 0 0 2.1rem 1.5%;
+            max-width: 72%;
+        }
+
+        .violations-table {
+            margin-top: 2.8rem;
+
+            .violations {
+                border: 1px solid #757575;
+                border-collapse: collapse;
+                font-size: 1.25rem;
+                line-height: 1.95rem;
+
+                thead {
+                    tr {
+                        background: #BBBBBB;
+                        border-bottom: 1px solid #757575;
+                        line-height: 3.55rem;
+                        text-transform: uppercase;
+
+                        th {
+                            padding: 0 12px;
+                        }
+                    }
+                }
+
+                tbody {
+                    tr {
+                        border-bottom: 1px solid #C3C3C3;
+                        font-size: 1.25rem;
+
+                        &.even {
+                            background: #EBEBEB;
+                        }
+
+                        &:last-child {
+                            border-bottom: 0 none;
+                        }
+
+                        td {
+                            padding: 1.15rem 12px;
+
+                            &.points-deducted {
+                                font-variant: small-caps;
+                                font-weight: bold;
+                                text-align: center;
+                            }
+                        }
+                    }
+                }
+
+                // td:first-child,
+                // th:first-child {
+                //     padding: 0 0;
+                // }
+            }
+        }
+
+        .source-line {
+            color: #666666;
+            font-size: 1rem;
+            line-height: 1.618rem;
+            margin-top: 2.25rem;
+            text-align: right;
+
+            strong {
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 400px) {
+    #inspection-detail {
+        font-size: 15px;
+    }
+
+    .grade-box {
+        width: 100px;
+
+        .grade {
+            font-size: 72px;
+            line-height: 70px;
+        }
+        .score {
+            font-size: 15px;
+        }
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+    #inspection {
+        font-size: 15px;
+        width: 150px;
+    }
+    table {
+        font-size: 12px;
+    }
+}

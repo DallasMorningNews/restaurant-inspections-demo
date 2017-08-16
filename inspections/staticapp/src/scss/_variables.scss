@@ -1,0 +1,68 @@
+$black15: rgb(15,15,15);
+$black33: rgb(33,33,33);
+$black51: rgb(51,51,51);
+$black215: rgb(215,215,215);
+$black235: rgb(235,235,235);
+
+$dmnblue: #0185d3;
+
+$legePrimary: #ca3d29;
+$legeWhite: #f0efed;
+$legeGreen: #6f9b65;
+
+
+//
+//== Colors
+
+$background-color: #F0EFED;
+$brand-primary: $legePrimary;
+$brand-danger: #bd2823;
+
+
+$grade-a-fill: #0185D3;
+$grade-b-fill: #3CBA54;
+$grade-c-fill: #C9B667;
+$grade-d-fill: #FF7300;
+$grade-f-fill: #C91507;
+
+
+//
+//== Scaffolding
+
+$body-bg: $background-color;
+$link-color: $black51;
+$link-hover-color: $dmnblue;
+$link-hover-decoration: none;
+
+
+//
+//== Typography
+$font-family-sans: "Gotham A", "Gotham B", Arial, sans-serif;
+
+
+//
+//== Components
+
+$border-radius-base: 0;
+$border-radius-large: 0;
+$border-radius-small: 0;
+
+
+//
+//== Grid system
+
+$grid-gutter-width: 45px;
+
+
+//
+//== Breadcrumbs
+
+$breadcrumb-padding-vertical: 8px;
+$breadcrumb-padding-horizontal: 15px;
+$breadcrumb-bg: transparent;
+$breadcrumb-color: white;
+$breadcrumb-active-color: $breadcrumb-color;
+$breadcrumb-separator: ">";
+
+
+$zindex-navbar: 1000;
