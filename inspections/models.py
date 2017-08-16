@@ -7,6 +7,11 @@ from django.db import models
 from django.urls import reverse
 
 
+VERBOSE_OVERRIDES = {
+    'tarrant_county': 'Tarrant County',
+}
+
+
 INSPECTING_AGENCY_CHOICES = (
     ('carrollton', 'City of Carrollton'),
     ('dallas', 'City of Dallas'),
@@ -118,7 +123,6 @@ class Inspection(models.Model):
             self.normalized_letter_grade
         )
 
-    @property
     def displayed_violations(self):
         if self.violation_set.count() == 0:
             return []
@@ -126,11 +130,28 @@ class Inspection(models.Model):
         violations = []
         for _ in self.violation_set.all():
             if _.points_deducted == 0 and _.additional_information:
-                return []
+                pass
             else:
                 violations.append(_)
 
         return violations
+    displayed_violations = property(displayed_violations)
+
+    def verbose_source_agency(self):
+        if self.source_agency in VERBOSE_OVERRIDES:
+            return VERBOSE_OVERRIDES['self.source_agency']
+
+        return 'the {}'.format(
+            # self.source_agency.replace('City', 'city')
+            self.source_agency
+        )
+    verbose_source_agency = property(verbose_source_agency)
+
+    def violations_count(self):
+        if self.normalized_numeric_grade is None:
+            return None
+        return 100 - self.normalized_numeric_grade
+    violations_count = property(violations_count)
 
 
 class Violation(models.Model):
