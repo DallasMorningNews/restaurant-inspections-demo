@@ -7,7 +7,7 @@ Then the scraped data will be exported as Django models and imported into a sear
 
 ## An important note
 
-**This code is unlicensed** — that is, it has not been licensed for use outside _The Dallas Morning News_. The scrapers and UI included here are pre-release versions, and are primarily published here to showcase the significant contribution our former intern has made to this project. Future releases of this data (and a public-facing UI) may be forthcoming.
+**This code is unlicensed** — that is, it has not been licensed for use outside _The Dallas Morning News_. The scrapers and UI included here are pre-release versions, and are primarily published here to showcase the significant contribution our former intern [Carlie Procell](https://github.com/qbscarlie) has made to this project. Future releases of this data (and a public-facing UI) will be forthcoming.
 
 
 ## Cities to be included:
