@@ -7,7 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
-    "license": "ISC",
+    "license": "Unlicensed",
     "devDependencies": {
         "babel-preset-es2015": "^6.9.0",
         "babel-preset-react": "^6.5.0",
